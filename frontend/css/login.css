@@ -1,0 +1,413 @@
+/* Variables CSS para mantener consistencia y facilitar cambios */
+:root {
+    --primary-color: #4f86f7;
+    --secondary-color: #6a67ce;
+    --background-gradient: linear-gradient(135deg, #f0f9ff 0%, #e6f2ff 100%);
+    --card-gradient: linear-gradient(120deg, #ffffff, #f7fbff);
+    --accent-gradient: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    --text-primary: #4a5568;
+    --text-secondary: #718096;
+    --border-color: #e0eeff;
+    --shadow-color: rgba(100, 149, 237, 0.2);
+    --success-color: #48bb78;
+    --error-color: #f56565;
+}
+
+/* Reset y estilos base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: var(--background-gradient);
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-primary);
+}
+
+/* Contenedor principal del login */
+.login-container {
+    width: 100%;
+    max-width: 430px;
+    background: var(--card-gradient);
+    border-radius: 18px;
+    box-shadow: 0 12px 30px var(--shadow-color);
+    padding: 40px 35px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.login-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: var(--accent-gradient);
+    border-radius: 18px 18px 0 0;
+}
+
+/* Logo con estrella */
+.logo {
+    width: 95px;
+    height: 95px;
+    margin: 5px auto 20px;
+    background: var(--accent-gradient);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 38px;
+    box-shadow: 0 8px 20px rgba(79, 134, 247, 0.4);
+    position: relative;
+}
+
+.logo::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border-radius: 50%;
+    box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.5);
+    animation: twinkle 3s infinite;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+/* Encabezado */
+.login-header h1 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    font-weight: 700;
+    font-size: 28px;
+    letter-spacing: 0.5px;
+}
+
+.brand-name {
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+}
+
+.welcome-text {
+    color: var(--text-secondary);
+    margin-bottom: 30px;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* Formulario */
+.login-form {
+    margin-top: 20px;
+}
+
+.input-group {
+    margin-bottom: 22px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 15px 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    background-color: #f7fbff;
+}
+
+.input-group input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.2);
+    outline: none;
+    background-color: white;
+}
+
+.input-icon {
+    position: relative;
+}
+
+.input-icon i {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary-color);
+    font-size: 17px;
+}
+
+.input-icon input {
+    padding-left: 48px;
+}
+
+/* Botones */
+.btn {
+    display: inline-block;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    text-decoration: none;
+}
+
+.btn-primary {
+    width: 100%;
+    background: var(--accent-gradient);
+    color: white;
+    margin-top: 10px;
+    box-shadow: 0 5px 15px rgba(79, 134, 247, 0.25);
+    letter-spacing: 0.5px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(79, 134, 247, 0.35);
+}
+
+.btn-link {
+    color: var(--primary-color);
+    background: transparent;
+    padding: 8px 12px;
+    font-weight: 500;
+}
+
+.btn-link:hover {
+    color: var(--secondary-color);
+    background-color: rgba(79, 134, 247, 0.1);
+}
+
+/* Enlaces */
+.change-password {
+    margin-top: 24px;
+    text-align: center;
+}
+
+/* Footer */
+.footer {
+    margin-top: 35px;
+    color: #a5b1c5;
+    font-size: 13px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Utilidades */
+.text-center {
+    text-align: center;
+}
+
+.mt-1 {
+    margin-top: 10px;
+}
+
+.mt-2 {
+    margin-top: 20px;
+}
+
+.mb-1 {
+    margin-bottom: 10px;
+}
+
+.mb-2 {
+    margin-bottom: 20px;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+    .login-container {
+        padding: 30px 25px;
+    }
+    
+    .login-header h1 {
+        font-size: 24px;
+    }
+    
+    .logo {
+        width: 80px;
+        height: 80px;
+        font-size: 32px;
+    }
+}
+
+/* Estados de validación */
+.input-group.success input {
+    border-color: var(--success-color);
+}
+
+.input-group.error input {
+    border-color: var(--error-color);
+}
+
+.validation-message {
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+}
+
+.error .validation-message {
+    display: block;
+    color: var(--error-color);
+}
+
+/* Modal de éxito - VERSIÓN MEJORADA */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    padding: 20px;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.success-modal {
+    transform: scale(0.9);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-overlay.active .success-modal {
+    transform: scale(1);
+    opacity: 1;
+}
+
+/* Animación de checkmark mejorada */
+.success-animation {
+    text-align: center;
+    margin: 25px 0;
+}
+
+.checkmark-container {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    position: relative;
+}
+
+.checkmark-background {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--accent-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.checkmark {
+    color: white;
+    font-size: 40px;
+    opacity: 0;
+    animation: fadeIn 0.3s ease-in-out 0.3s forwards;
+}
+
+@keyframes scaleIn {
+    0% { transform: scale(0); }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.success-title {
+    color: var(--success-color);
+    font-weight: 700;
+    margin-bottom: 15px;
+    font-size: 24px;
+}
+
+.success-message {
+    color: var(--text-secondary);
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+/* Modal de recuperación de contraseña */
+.recovery-modal {
+    transform: scale(0.9);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-overlay.active .recovery-modal {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.recovery-description {
+    color: var(--text-secondary);
+    margin-bottom: 25px;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+/* Botón de cerrar modal */
+.close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.close-modal:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: var(--primary-color);
+}

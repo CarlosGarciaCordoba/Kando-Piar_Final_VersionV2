@@ -1,0 +1,1409 @@
+/* Estilos específicos para el formulario PIAR */
+/* Extiende los estilos del dashboard manteniendo la consistencia visual */
+
+/* Variables adicionales para consistencia (por si no están heredadas) */
+:root {
+    --hover-color: rgba(79, 134, 247, 0.08);
+    --primary-light: rgba(79, 134, 247, 0.15);
+    --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --text-muted: #a0aec0;
+}
+
+/* Sidebar/Menú lateral - Manteniendo estilos exactos del dashboard */
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--card-gradient);
+    box-shadow: 5px 0 15px var(--shadow-color);
+    height: calc(100vh - var(--header-height));
+    position: fixed;
+    left: 0;
+    top: var(--header-height);
+    z-index: 1000;
+    border-right: 1px solid var(--border-color);
+    overflow-y: auto;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-header {
+    padding: 25px 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--accent-gradient);
+    color: white;
+}
+
+.user-info {
+    text-align: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.user-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    background: var(--accent-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 30px;
+}
+
+.user-details {
+    margin-bottom: 20px;
+}
+
+.user-details p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+}
+
+.logout-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: var(--accent-gradient);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+    box-shadow: 0 5px 15px rgba(79, 134, 247, 0.3);
+    transform: translateY(-2px);
+}
+
+.sidebar-menu {
+    padding: 20px 0;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 18px 25px;
+    color: var(--text-primary);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.menu-item:hover {
+    background: rgba(79, 134, 247, 0.08);
+    color: var(--primary-color);
+    padding-left: 30px;
+}
+
+.menu-item.active {
+    background: rgba(79, 134, 247, 0.15);
+    color: var(--primary-color);
+    border-left: 4px solid var(--primary-color);
+    font-weight: 600;
+}
+
+.menu-item i {
+    margin-right: 15px;
+    width: 20px;
+    font-size: 16px;
+    color: var(--primary-color);
+}
+
+/* Contenido principal */
+.content {
+    flex: 1;
+    padding: 30px;
+    margin-left: var(--sidebar-width);
+    min-height: calc(100vh - var(--header-height));
+    margin-top: var(--header-height);
+}
+
+/* Encabezado del formulario */
+.form-header {
+    background: var(--card-gradient);
+    border-radius: 18px;
+    padding: 30px;
+    box-shadow: 0 5px 20px var(--shadow-color);
+    margin-bottom: 30px;
+    border: 1px solid var(--border-color);
+    text-align: center;
+}
+
+.form-header h1 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-size: 28px;
+}
+
+.form-header p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+/* Botón para habilitar formulario */
+.enable-form-section {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.enable-form-btn {
+    background: var(--accent-gradient);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 20px 40px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(79, 134, 247, 0.25);
+}
+
+.enable-form-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(79, 134, 247, 0.35);
+}
+
+.enable-form-btn i {
+    margin-right: 12px;
+    font-size: 20px;
+}
+
+/* Secciones del formulario */
+.form-sections {
+    margin-top: 20px;
+}
+
+.form-section {
+    background: var(--card-gradient);
+    border-radius: 18px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 20px var(--shadow-color);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.section-header {
+    background: var(--accent-gradient);
+    color: white;
+    padding: 20px 25px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.3s ease;
+}
+
+.section-header:hover {
+    background: linear-gradient(90deg, #5a96f7, #7a77de);
+}
+
+.section-header h2 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 20px;
+    font-weight: 600;
+    color: white !important;
+}
+
+.section-header h2 i:first-child {
+    margin-right: 12px;
+}
+
+.toggle-icon {
+    transition: transform 0.3s ease;
+}
+
+.section-header.collapsed .toggle-icon {
+    transform: rotate(-90deg);
+}
+
+.section-content {
+    padding: 20px;
+    display: block;
+}
+
+.section-content.collapsed {
+    display: none;
+}
+
+/* Información de expedición */
+.expedition-info {
+    background: rgba(79, 134, 247, 0.05);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.expedition-data {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.expedition-user {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+/* Divisores de sección */
+.section-divider {
+    margin: 5px 0 15px 0;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.section-divider h2 {
+    color: var(--primary-color);
+    font-size: 24px;
+    margin: 0;
+}
+
+/* Subsecciones */
+.subsection {
+    margin-bottom: 30px;
+}
+
+.subsection h3 {
+    color: var(--text-primary);
+    font-size: 20px;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Títulos con letras (A, B, C, etc.) - Color azul */
+.subsection h3.section-letter {
+    background: var(--primary-color);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    border-bottom: none;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(79, 134, 247, 0.2);
+}
+
+.section h3.section-letter {
+    background: var(--primary-color);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    border-bottom: none;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(79, 134, 247, 0.2);
+}
+
+/* Títulos H3 sin letras - Solo negrilla */
+.subsection h3:not(.section-letter) {
+    font-weight: 700;
+}
+
+.section h3:not(.section-letter) {
+    color: var(--text-primary);
+    font-size: 18px;
+    font-weight: 700;
+    margin: 25px 0 20px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.subsection h4 {
+    color: var(--primary-color);
+    font-size: 18px;
+    margin: 25px 0 15px 0;
+    font-weight: 600;
+}
+
+/* Formulario */
+.student-form {
+    max-width: 100%;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-bottom: 25px;
+}
+
+.form-row.single-column {
+    grid-template-columns: 1fr;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.required {
+    color: var(--error-color);
+}
+
+.form-group input,
+.form-group select {
+    padding: 12px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    background-color: #f7fbff;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.2);
+    outline: none;
+    background-color: white;
+}
+
+.form-group input:read-only {
+    background-color: #f5f5f5;
+    color: var(--text-secondary);
+    cursor: not-allowed;
+}
+
+/* Radio buttons personalizados */
+.radio-group {
+    display: flex;
+    gap: 20px;
+    margin-top: 8px;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: normal;
+    margin-bottom: 0;
+}
+
+.radio-label input[type="radio"] {
+    display: none;
+}
+
+.radio-custom {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    margin-right: 8px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.radio-label input[type="radio"]:checked + .radio-custom {
+    border-color: var(--primary-color);
+    background-color: var(--primary-color);
+}
+
+.radio-label input[type="radio"]:checked + .radio-custom::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Checkbox buttons personalizados */
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 8px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: normal;
+    margin-bottom: 0;
+}
+
+.checkbox-label input[type="checkbox"] {
+    display: none;
+}
+
+.checkbox-custom {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    margin-right: 8px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkbox-custom {
+    border-color: var(--primary-color);
+    background-color: var(--primary-color);
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkbox-custom::after {
+    content: '✓';
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Mensajes de error */
+.error-message {
+    color: var(--error-color);
+    font-size: 12px;
+    margin-top: 5px;
+    display: none;
+}
+
+.error-message.show {
+    display: block;
+}
+
+.form-group.error input,
+.form-group.error select {
+    border-color: var(--error-color);
+    background-color: #ffebee;
+}
+
+/* Botones de acción */
+.form-actions {
+    margin-top: 40px;
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: var(--accent-gradient);
+    color: white;
+    box-shadow: 0 3px 10px rgba(79, 134, 247, 0.25);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(79, 134, 247, 0.35);
+}
+
+.btn-secondary {
+    background: #f8f9fa;
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: #e9ecef;
+    border-color: var(--primary-color);
+}
+
+/* Menú activo */
+.menu-item.active {
+    background-color: rgba(79, 134, 247, 0.15);
+    border-left-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.menu-item.active i {
+    color: var(--primary-color);
+}
+
+/* Responsive para formulario */
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .section-content {
+        padding: 20px;
+    }
+    
+    .form-header {
+        padding: 20px;
+    }
+    
+    .form-header h1 {
+        font-size: 24px;
+    }
+    
+    .enable-form-btn {
+        padding: 15px 25px;
+        font-size: 16px;
+        width: 100%;
+    }
+}
+
+/* Responsive del sidebar - Manteniendo estilos exactos del dashboard */
+@media (max-width: 992px) {
+    /* Ocultar sidebar por defecto en móviles */
+    .sidebar {
+        transform: translateX(-100%);
+        width: var(--sidebar-width);
+    }
+    
+    /* Mostrar sidebar cuando tiene la clase mobile-open */
+    .sidebar.mobile-open {
+        transform: translateX(0);
+        z-index: 1000;
+    }
+    
+    /* Ajustar contenido para móviles */
+    .content {
+        margin-left: 0;
+        padding: 20px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .expedition-info {
+        padding: 15px;
+    }
+    
+    .radio-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .checkbox-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .form-header h1 {
+        font-size: 20px;
+    }
+    
+    .subsection h3 {
+        font-size: 18px;
+    }
+    
+    .subsection h4 {
+        font-size: 16px;
+    }
+    
+    /* Sidebar para móviles pequeños - Manteniendo estilos del dashboard */
+    .content {
+        padding: 15px;
+    }
+    
+    .sidebar {
+        width: 85%; /* El menú ocupa el 85% del ancho en móviles */
+        max-width: 300px; /* Pero no más de 300px */
+    }
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.modal-content h3 {
+    color: var(--text-primary);
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+.modal-content p {
+    color: var(--text-secondary);
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn-confirm {
+    background: var(--accent-gradient);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-confirm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(79, 134, 247, 0.3);
+}
+
+.btn-cancel {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 2px solid var(--text-secondary);
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+    background: var(--text-secondary);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Estilos específicos para Anexo 2 */
+.intro-paragraph {
+    background: rgba(79, 134, 247, 0.08);
+    border-left: 4px solid var(--primary-color);
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+}
+
+.intro-paragraph p {
+    margin: 0 0 15px 0;
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+.intro-paragraph p:last-child {
+    margin-bottom: 0;
+}
+
+.cognitive-section {
+    margin-top: 25px;
+    padding: 20px;
+    background: var(--card-background);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.cognitive-section h3 {
+    color: var(--primary-color);
+    margin: 0 0 20px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(79, 134, 247, 0.2);
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.evaluation-container {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    border: 1px dashed var(--border-color);
+    text-align: center;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Estilos para la tabla de evaluación */
+.evaluation-table-container {
+    margin: 20px 0;
+    overflow-x: auto;
+}
+
+.evaluation-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.evaluation-table th,
+.evaluation-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.evaluation-table th {
+    background: var(--accent-gradient);
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.factor-column {
+    width: 15%;
+    font-weight: 600;
+}
+
+.aspects-column {
+    width: 65%;
+}
+
+.rating-column {
+    width: 20%;
+    text-align: center;
+}
+
+.rating-header {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.rating-header span {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.factor-cell {
+    font-weight: 600;
+    color: var(--primary-color);
+    vertical-align: top;
+}
+
+.aspects-cell {
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+.rating-cell {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.rating-checkboxes {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.rating-checkboxes input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--primary-color);
+}
+
+.rating-checkboxes input[type="radio"]:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}
+
+/* Estilos para el campo de observaciones cognitivas */
+#observacionesCognitivas {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    resize: vertical;
+}
+
+#observacionesCognitivas:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    transform: translateY(-1px);
+}
+
+#observacionesCognitivas::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+    opacity: 0.8;
+}
+
+/* Label del campo de observaciones */
+label[for="observacionesCognitivas"] {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    display: block;
+    font-size: 15px;
+}
+
+/* Contenedor del campo de observaciones */
+.form-group.full-width {
+    position: relative;
+}
+
+.form-group.full-width::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--accent-gradient);
+    border-radius: 12px 12px 0 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.form-group.full-width:focus-within::before {
+    opacity: 1;
+}
+
+/* Estilos para el campo de observaciones de razonamiento - idénticos a cognitivas */
+#observacionesRazonamiento {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    resize: vertical;
+}
+
+#observacionesRazonamiento:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    transform: translateY(-1px);
+}
+
+#observacionesRazonamiento::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+    opacity: 0.8;
+}
+
+/* Label del campo de observaciones de razonamiento */
+label[for="observacionesRazonamiento"] {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    display: block;
+    font-size: 15px;
+}
+
+/* Estilos para el campo de observaciones de competencias lectoras - idénticos a los anteriores */
+#observacionesCompetenciasLectoras {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    resize: vertical;
+}
+
+#observacionesCompetenciasLectoras:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    transform: translateY(-1px);
+}
+
+#observacionesCompetenciasLectoras::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+    opacity: 0.8;
+}
+
+/* Label del campo de observaciones de competencias lectoras */
+label[for="observacionesCompetenciasLectoras"] {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    display: block;
+    font-size: 15px;
+}
+
+/* Estilos para el campo de observaciones de habilidades numéricas - idénticos a los anteriores */
+#observacionesHabilidadesNumericas {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    resize: vertical;
+}
+
+#observacionesHabilidadesNumericas:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    transform: translateY(-1px);
+}
+
+#observacionesHabilidadesNumericas::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+    opacity: 0.8;
+}
+
+/* Label del campo de observaciones de habilidades numéricas */
+label[for="observacionesHabilidadesNumericas"] {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    display: block;
+    font-size: 15px;
+}
+
+/* Estilos para el campo de observaciones de funciones ejecutivas - idénticos a los anteriores */
+#observacionesFuncionesEjecutivas {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    resize: vertical;
+}
+
+#observacionesFuncionesEjecutivas:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    transform: translateY(-1px);
+}
+
+#observacionesFuncionesEjecutivas::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+    opacity: 0.8;
+}
+
+/* Label del campo de observaciones de funciones ejecutivas */
+label[for="observacionesFuncionesEjecutivas"] {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    display: block;
+    font-size: 15px;
+}
+
+/* Estilos para el campo de observaciones de dimensión comunicativa - idénticos a los anteriores */
+#observacionesDimensionComunicativa {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    resize: vertical;
+}
+
+#observacionesDimensionComunicativa:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    transform: translateY(-1px);
+}
+
+#observacionesDimensionComunicativa::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+    opacity: 0.8;
+}
+
+/* Label del campo de observaciones de dimensión comunicativa */
+label[for="observacionesDimensionComunicativa"] {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    display: block;
+    font-size: 15px;
+}
+
+/* Estilos para el campo de observaciones de dimensión corporal - idénticos a los anteriores */
+#observacionesDimensionCorporal {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    resize: vertical;
+}
+
+#observacionesDimensionCorporal:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    transform: translateY(-1px);
+}
+
+#observacionesDimensionCorporal::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+    opacity: 0.8;
+}
+
+/* Label del campo de observaciones de dimensión corporal */
+label[for="observacionesDimensionCorporal"] {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    display: block;
+    font-size: 15px;
+}
+
+/* Estilos para el campo de observaciones de dimensión socioafectiva - idénticos a los anteriores */
+#observacionesDimensionSocioafectiva {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    resize: vertical;
+}
+
+#observacionesDimensionSocioafectiva:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    transform: translateY(-1px);
+}
+
+#observacionesDimensionSocioafectiva::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+    opacity: 0.8;
+}
+
+/* Label del campo de observaciones de dimensión socioafectiva */
+label[for="observacionesDimensionSocioafectiva"] {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    display: block;
+    font-size: 15px;
+}
+
+/* Estilos para el campo de observaciones de entornos del estudiante - idénticos a los anteriores */
+#observacionesEntornos {
+    width: 100%;
+    min-height: 120px;
+    padding: 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    resize: vertical;
+}
+
+#observacionesEntornos:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    transform: translateY(-1px);
+}
+
+#observacionesEntornos::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+    opacity: 0.8;
+}
+
+/* Label del campo de observaciones de entornos del estudiante */
+label[for="observacionesEntornos"] {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    display: block;
+    font-size: 15px;
+}
+
+/* Estilos para el contador de caracteres */
+.character-count {
+    display: block;
+    text-align: right;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 5px;
+    font-style: italic;
+}
+
+/* Estilos para la sección de firma digital */
+.signature-section {
+    background: #f8fafc;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 25px;
+    margin: 20px 0;
+}
+
+.signature-section h3 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 10px;
+}
+
+.signature-container {
+    margin-top: 20px;
+}
+
+.signature-container label {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    display: block;
+    font-size: 15px;
+}
+
+.signature-pad-container {
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background: white;
+    padding: 10px;
+    text-align: center;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+#signaturePad {
+    border: 1px dashed #cbd5e0;
+    border-radius: 6px;
+    cursor: crosshair;
+    background: white;
+    display: block;
+    margin: 0 auto;
+    width: 500px;
+    height: 200px;
+    max-width: 100%;
+}
+
+#signaturePad:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.1);
+}
+
+.signature-controls {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.signature-controls .btn-secondary {
+    padding: 8px 16px;
+    font-size: 14px;
+    min-width: 120px;
+}
+
+.signature-status {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.signature-status.info {
+    background: #e6f3ff;
+    color: #0066cc;
+    border: 1px solid #b3d9ff;
+}
+
+.signature-status.success {
+    background: #e6f7e6;
+    color: #008000;
+    border: 1px solid #b3e6b3;
+}
+
+.signature-status.warning {
+    background: #fff5e6;
+    color: #cc6600;
+    border: 1px solid #ffcc99;
+}
+
+.signature-status.error {
+    background: #ffe6e6;
+    color: #cc0000;
+    border: 1px solid #ffb3b3;
+}
+
+/* Responsividad para la firma digital */
+@media (max-width: 768px) {
+    .signature-section {
+        padding: 15px;
+        margin: 15px 0;
+    }
+    
+    #signaturePad {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .signature-controls {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .signature-controls .btn-secondary {
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+/* Estilos para textarea de observaciones generales */
+#observacionesGenerales {
+    min-height: 120px;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.5;
+}
+
+#observacionesGenerales:focus {
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.1);
+    border-color: var(--primary-color);
+}
+
+

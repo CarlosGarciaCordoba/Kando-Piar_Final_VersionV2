@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramétricas - Kando</title>
+    <link rel="icon" type="image/svg+xml" href="../css/images/favicon.svg">
+    <link rel="icon" type="image/x-icon" href="../css/images/ico_barra.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/parametricas.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="hamburger-menu">
+            <button class="toggle-sidebar" id="toggleSidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="institution-info">
+                <i class="fas fa-building"></i>
+                <span>Secretaria de Educación</span>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="action-btn">
+                <i class="fas fa-bell"></i>
+            </button>
+            <button class="action-btn">
+                <i class="fas fa-cog"></i>
+            </button>
+            <button class="action-btn">
+                <i class="fas fa-question"></i>
+            </button>
+            <button class="action-btn">
+                <i class="fas fa-envelope"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Overlay para móviles -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar/Menú Lateral -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Kando</h2>
+        </div>
+        
+        <div class="user-info">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-details">
+                <div class="user-name" id="userName">Cargando...</div>
+                <p><i class="fas fa-code"></i> <span id="userCode">Cargando...</span></p>
+                <p><i class="fas fa-envelope"></i> <span id="userEmail">Cargando...</span></p>
+            </div>
+            <button class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+        </div>
+        
+        <nav class="sidebar-menu">
+            <a href="./dashboard.html" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span class="menu-text">Inicio</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-chart-bar"></i>
+                <span class="menu-text">Estadísticas</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-users"></i>
+                <span class="menu-text">Estudiantes</span>
+            </a>
+            <a href="./formulario-piar.html" class="menu-item">
+                <i class="fas fa-book"></i>
+                <span class="menu-text">Formulario Piar</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span class="menu-text">Calendario</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-file-alt"></i>
+                <span class="menu-text">Reportes</span>
+            </a>
+            <a href="./parametricas.html" class="menu-item active">
+                <i class="fas fa-cog"></i>
+                <span class="menu-text">Paramétricas</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Contenido Principal -->
+    <main class="content" id="content">
+        <!-- Título Principal -->
+        <div class="form-header">
+            <h1>Gestión de Paramétricas</h1>
+            <p>Configuración y administración de parámetros del sistema PIAR.</p>
+        </div>
+
+        <!-- Navegación por pestañas -->
+        <div class="parametricas-nav">
+            <button class="tab-btn active" data-tab="usuario">
+                <i class="fas fa-user"></i> Usuario
+            </button>
+            <button class="tab-btn" data-tab="perfil">
+                <i class="fas fa-id-card"></i> Perfil
+            </button>
+            <button class="tab-btn" data-tab="control-acceso">
+                <i class="fas fa-shield-alt"></i> Control de acceso por perfil
+            </button>
+            <button class="tab-btn" data-tab="parametros">
+                <i class="fas fa-cogs"></i> Parámetros
+            </button>
+        </div>
+
+        <!-- Contenido de las pestañas -->
+        <div class="parametricas-content">
+            
+            <!-- Sección Usuario -->
+            <div class="tab-content active" id="usuario-tab">
+                <div class="section-header">
+                    <h2><i class="fas fa-user"></i> Gestión de Usuarios</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-primary" onclick="openUserModal()">
+                            <i class="fas fa-plus"></i> Agregar Usuario
+                        </button>
+                        <button class="btn btn-secondary" onclick="refreshUsers()">
+                            <i class="fas fa-sync"></i> Actualizar
+                        </button>
+                        <button class="btn btn-success" onclick="exportUsers()">
+                            <i class="fas fa-download"></i> Exportar
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Usuario</th>
+                                <th>Email</th>
+                                <th>Perfil</th>
+                                <th>Estado</th>
+                                <th>Cód. Tercero</th>
+                                <th>Dep. Empresa</th>
+                                <th>Fecha Modificación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <tr>
+                                <td>AC1</td>
+                                <td>USUARIO PRUEBAS B</td>
+                                <td>-</td>
+                                <td>ADMINISTRADOR</td>
+                                <td><span class="status-badge inactive">INACTIVO</span></td>
+                                <td>1001029</td>
+                                <td>VENTAS</td>
+                                <td>13-09-2024 04:51 PM</td>
+                                <td>
+                                    <button class="btn-icon" onclick="editUser('AC1')" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-icon" onclick="deleteUser('AC1')" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>AC2</td>
+                                <td>USUARIO PRUEBAS 1</td>
+                                <td>yeomar.rios@gmail.com</td>
+                                <td>PAGOS API NUWWE</td>
+                                <td><span class="status-badge active">ACTIVO</span></td>
+                                <td>1057595671</td>
+                                <td>POR DEFINIR</td>
+                                <td>31-07-2025 12:20 PM</td>
+                                <td>
+                                    <button class="btn-icon" onclick="editUser('AC2')" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-icon" onclick="deleteUser('AC2')" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sección Perfil -->
+            <div class="tab-content" id="perfil-tab">
+                <div class="section-header">
+                    <h2><i class="fas fa-id-card"></i> Gestión de Perfiles</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-primary" onclick="openProfileModal()">
+                            <i class="fas fa-plus"></i> Agregar Perfil
+                        </button>
+                        <button class="btn btn-secondary" onclick="refreshProfiles()">
+                            <i class="fas fa-sync"></i> Actualizar
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Estado</th>
+                                <th>Fecha Creación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="profiles-table-body">
+                            <tr>
+                                <td>ADM</td>
+                                <td>ADMINISTRADOR</td>
+                                <td>Perfil con acceso completo al sistema</td>
+                                <td><span class="status-badge active">ACTIVO</span></td>
+                                <td>01-01-2024 10:00 AM</td>
+                                <td>
+                                    <button class="btn-icon" onclick="editProfile('ADM')" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn-icon" onclick="deleteProfile('ADM')" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sección Control de Acceso -->
+            <div class="tab-content" id="control-acceso-tab">
+                <div class="section-header">
+                    <h2><i class="fas fa-shield-alt"></i> Control de Acceso por Perfil</h2>
+                    <div class="section-actions">
+                        <select class="form-select" id="profile-selector">
+                            <option value="">Seleccionar Perfil</option>
+                            <option value="ADM">ADMINISTRADOR</option>
+                            <option value="DOC">DOCENTE</option>
+                            <option value="EST">ESTUDIANTE</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="savePermissions()">
+                            <i class="fas fa-save"></i> Guardar Permisos
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="permissions-grid" id="permissions-container">
+                    <div class="permission-group">
+                        <h3>Usuarios</h3>
+                        <div class="permissions-list">
+                            <label class="permission-item">
+                                <input type="checkbox" name="permission" value="users.view">
+                                <span>Ver usuarios</span>
+                            </label>
+                            <label class="permission-item">
+                                <input type="checkbox" name="permission" value="users.create">
+                                <span>Crear usuarios</span>
+                            </label>
+                            <label class="permission-item">
+                                <input type="checkbox" name="permission" value="users.edit">
+                                <span>Editar usuarios</span>
+                            </label>
+                            <label class="permission-item">
+                                <input type="checkbox" name="permission" value="users.delete">
+                                <span>Eliminar usuarios</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="permission-group">
+                        <h3>Formulario PIAR</h3>
+                        <div class="permissions-list">
+                            <label class="permission-item">
+                                <input type="checkbox" name="permission" value="piar.view">
+                                <span>Ver formularios</span>
+                            </label>
+                            <label class="permission-item">
+                                <input type="checkbox" name="permission" value="piar.create">
+                                <span>Crear formularios</span>
+                            </label>
+                            <label class="permission-item">
+                                <input type="checkbox" name="permission" value="piar.edit">
+                                <span>Editar formularios</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="permission-group">
+                        <h3>Reportes</h3>
+                        <div class="permissions-list">
+                            <label class="permission-item">
+                                <input type="checkbox" name="permission" value="reports.view">
+                                <span>Ver reportes</span>
+                            </label>
+                            <label class="permission-item">
+                                <input type="checkbox" name="permission" value="reports.export">
+                                <span>Exportar reportes</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección Parámetros -->
+            <div class="tab-content" id="parametros-tab">
+                <div class="section-header">
+                    <h2><i class="fas fa-cogs"></i> Parámetros</h2>
+                    <div class="section-actions">
+                        <button class="btn btn-primary" onclick="openParametroModal()">
+                            <i class="fas fa-plus"></i> Agregar parámetro nuevo
+                        </button>
+                        <button class="btn btn-secondary" onclick="refreshParametros()">
+                            <i class="fas fa-sync"></i> Actualizar
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Descripción</th>
+                                <th>Estado</th>
+                                <th>Fecha Creación</th>
+                                <th>Última Modificación</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="parametros-table-body">
+                            <!-- Los datos se cargarán dinámicamente -->
+                            <tr>
+                                <td colspan="6" class="loading-row">
+                                    <i class="fas fa-spinner fa-spin"></i> Cargando parámetros...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal para Parámetros -->
+    <div id="parametroModal" class="modal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h3 id="parametroModalTitle">Agregar Parámetro</h3>
+                <button class="modal-close" onclick="closeParametroModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="parametroForm" class="modal-form" onsubmit="handleParametroFormSubmit(event)">
+                <input type="hidden" id="parametroId" name="id">
+                <input type="hidden" id="parametroCategoria" name="categoria">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="parametroTipo">Tipo de Parámetro <span class="required">*</span></label>
+                        <select id="parametroTipo" name="tipo" required onchange="handleParametroTipoChange()">
+                            <option value="">Seleccione un tipo</option>
+                            <option value="tipos_documento">Tipos de Documento</option>
+                            <option value="generos">Géneros</option>
+                            <option value="eps">EPS</option>
+                            <option value="barrios">Barrios</option>
+                            <option value="departamentos">Departamentos</option>
+                            <option value="municipios">Municipios</option>
+                        </select>
+                        <small>Categoría del parámetro a crear</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="parametroCodigo">Código <span class="required">*</span></label>
+                        <input type="text" id="parametroCodigo" name="codigo" maxlength="10" required>
+                        <small>Código único del parámetro (ej: CC, TI, RC)</small>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="parametroDescripcion">Descripción <span class="required">*</span></label>
+                        <input type="text" id="parametroDescripcion" name="descripcion" maxlength="100" required>
+                        <small>Descripción completa del parámetro</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="parametroActivo">Estado</label>
+                        <select id="parametroActivo" name="activo">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-secondary" onclick="closeParametroModal()">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación para eliminar -->
+    <div id="deleteParametroModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmar Eliminación</h3>
+                <button class="modal-close" onclick="closeDeleteParametroModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar el parámetro <strong id="deleteParametroNombre"></strong>?</p>
+                <p class="warning-text">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Esta acción no se puede deshacer. El parámetro será eliminado permanentemente.
+                </p>
+            </div>
+            
+            <div class="modal-buttons">
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteParametroModal()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-danger" onclick="confirmDeleteParametro()">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación de logout -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <h3>Confirmar cerrar sesión</h3>
+            <p>¿Estás seguro de que quieres cerrar sesión?</p>
+            <div class="modal-buttons">
+                <button id="confirmLogout" class="btn-confirm">Sí, cerrar sesión</button>
+                <button id="cancelLogout" class="btn-cancel">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/dashboard.js"></script>
+    <script src="../js/parametricas.js"></script>
+</body>
+</html>

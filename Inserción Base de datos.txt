@@ -1,0 +1,200 @@
+-- Insertar los colegios de Floridablanca
+INSERT INTO colegios (codigo_institucion, nombre) VALUES
+('GJNAV', 'COLEGIO GONZALO JIMENEZ NAVAS'),
+('LACUM', 'INSTITUTO LA CUMBRE'),
+('GMIST', 'INSTITUTO GABRIELA MISTRAL'),
+('MBCON', 'INSTITUTO MADRE DEL BUEN CONSEJO'),
+('CMSUR', 'COLEGIO METROPOLITANO DEL SUR'),
+('ICABA', 'COLEGIO ISIDRO CABALLERO'),
+('JGALA', 'INSTITUTO JOSE ANTONIO GALAN'),
+('ISBER', 'INSTITUTO INTEGRADO SAN BERNARDO'),
+('JEPUY', 'COLEGIO TECNICO JOSE ELIAS PUYANA'),
+('VAZUE', 'COLEGIO VICENTE AZUERO'),
+('GGMAR', 'INSTITUTO GABRIEL GARCIA MARQUEZ'),
+('CMINC', 'INSTITUTO COMUNITARIO MINCA'),
+('RPOMB', 'INSTITUTO RAFAEL POMBO'),
+('TMCAR', 'COLEGIO TECNICO MICROEMPRESARIAL EL CARMEN'),
+('AGDALE', 'INSTITUTO AGROPECUARIO GUSTAVO DUARTE ALEMAN'),
+('CEFLOR', 'COLEGIO ECOLOGICO DE FLORIDABLANCA');
+
+-- Insertar sedes por colegio
+-- COLEGIO GONZALO JIMENEZ NAVAS
+INSERT INTO sedes (colegio_id, codigo_sede, nombre, codigo_completo) VALUES
+((SELECT id FROM colegios WHERE codigo_institucion = 'GJNAV'), 'SA', 'SEDE A COLEGIO GONZALO JIMENEZ NAVAS', 'GJNAVSA'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'GJNAV'), 'SB', 'SEDE B INSTITUTO HUMBERTO GOMEZ NIGRINIS', 'GJNAVSB'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'GJNAV'), 'SC', 'SEDE C INSTITUTO GARCIA ECHEVERRY', 'GJNAVSC');
+
+-- INSTITUTO LA CUMBRE
+INSERT INTO sedes (colegio_id, codigo_sede, nombre, codigo_completo) VALUES
+((SELECT id FROM colegios WHERE codigo_institucion = 'LACUM'), 'SA', 'SEDE A INSTITUTO LA CUMBRE', 'LACUMSA'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'LACUM'), 'SB', 'SEDE B INSTITUTO CARLOS GUTIERREZ GOMEZ', 'LACUMSB');
+
+-- INSTITUTO GABRIELA MISTRAL
+INSERT INTO sedes (colegio_id, codigo_sede, nombre, codigo_completo) VALUES
+((SELECT id FROM colegios WHERE codigo_institucion = 'GMIST'), 'SA', 'SEDE A INSTITUTO EMPRESARIAL GABRIELA MISTRAL', 'GMISTSA'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'GMIST'), 'SB', 'SEDE B INSTITUTO EL PORVENIR', 'GMISTSB');
+
+-- INSTITUTO MADRE DEL BUEN CONSEJO
+INSERT INTO sedes (colegio_id, codigo_sede, nombre, codigo_completo) VALUES
+((SELECT id FROM colegios WHERE codigo_institucion = 'MBCON'), 'SA', 'SEDE A INSTITUTO MADRE DEL BUEN CONSEJO', 'MBCONSA'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'MBCON'), 'SB', 'SEDE B INSTITUTO DOMINGO SAVIO', 'MBCONSB'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'MBCON'), 'SC', 'SEDE C INSTITUTO JOSEFA DEL CASTILLO', 'MBCONSC'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'MBCON'), 'SD', 'SEDE D INSTITUTO EL PROGRESO', 'MBCONSD');
+
+-- COLEGIO METROPOLITANO DEL SUR
+INSERT INTO sedes (colegio_id, codigo_sede, nombre, codigo_completo) VALUES
+((SELECT id FROM colegios WHERE codigo_institucion = 'CMSUR'), 'SA', 'SEDE A COLEGIO METROPOLITANO DEL SUR', 'CMSURSA'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'CMSUR'), 'SB', 'SEDE B INSTITUTO SANTA ANA', 'CMURSB'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'CMSUR'), 'SC', 'SEDE C INSTITUTO EL DORADO', 'CMSURSC'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'CMSUR'), 'SD', 'SEDE D INSTITUTO FLORICCE', 'CMSURSD');
+
+-- COLEGIO ISIDRO CABALLERO
+INSERT INTO sedes (colegio_id, codigo_sede, nombre, codigo_completo) VALUES
+((SELECT id FROM colegios WHERE codigo_institucion = 'ICABA'), 'SA', 'SEDE A COLEGIO ISIDRO CABALLERO', 'ICABASA'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'ICABA'), 'SB', 'SEDE B INSTITUTO LA CASTELLANA', 'ICABASB'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'ICABA'), 'SC', 'SEDE C INSTITUTO FUNDESAN', 'ICABASC'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'ICABA'), 'SD', 'SEDE D INSTITUTO FE Y ALEGRIA', 'ICABASD'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'ICABA'), 'SE', 'SEDE E INSTITUTO LAS VILLAS', 'ICABASE');
+
+-- INSTITUTO JOSE ANTONIO GALAN
+INSERT INTO sedes (colegio_id, codigo_sede, nombre, codigo_completo) VALUES
+((SELECT id FROM colegios WHERE codigo_institucion = 'JGALA'), 'SA', 'SEDE A INSTITUTO JOSE ANTONIO GALAN', 'JGALASA'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'JGALA'), 'SB', 'SEDE B INSTITUTO MARY LUNA SANTOS', 'JGALASB');
+
+-- INSTITUTO INTEGRADO SAN BERNARDO
+INSERT INTO sedes (colegio_id, codigo_sede, nombre, codigo_completo) VALUES
+((SELECT id FROM colegios WHERE codigo_institucion = 'ISBER'), 'SA', 'SEDE A INSTITUTO INTEGRADO SAN BERNARDO', 'ISBERSA'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'ISBER'), 'SB', 'SEDE B INSTITUTO LA TRINIDAD', 'ISBERSB'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'ISBER'), 'SC', 'SEDE C INSTITUTO BELENCITO', 'ISBERSC');
+
+-- COLEGIO TECNICO JOSE ELIAS PUYANA
+INSERT INTO sedes (colegio_id, codigo_sede, nombre, codigo_completo) VALUES
+((SELECT id FROM colegios WHERE codigo_institucion = 'JEPUY'), 'SA', 'SEDE A COLEGIO TECNICO INDUSTRIAL JOSE ELIAS PUYANA', 'JEPUYSA'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'JEPUY'), 'SB', 'SEDE B INSTITUTO MANUELA BELTRAN', 'JEPUYSB'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'JEPUY'), 'SC', 'SEDE C COLEGIO TECNICO INDUSTRIAL JOSE ELIAS PUYANA', 'JEPUYSC');
+
+-- COLEGIO VICENTE AZUERO
+INSERT INTO sedes (colegio_id, codigo_sede, nombre, codigo_completo) VALUES
+((SELECT id FROM colegios WHERE codigo_institucion = 'VAZUE'), 'SA', 'SEDE A COLEGIO VICENTE AZUERO', 'VAZUESA'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'VAZUE'), 'SB', 'SEDE B INSTITUTO JUAN PABLO 1', 'VAZUESB'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'VAZUE'), 'SC', 'SEDE C INSTITUTO ANDRES BELLO', 'VAZUESC'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'VAZUE'), 'SD', 'SEDE D INSTITUTO RURAL RIO FRIO', 'VAZUESD');
+
+-- INSTITUTO GABRIEL GARCIA MARQUEZ
+INSERT INTO sedes (colegio_id, codigo_sede, nombre, codigo_completo) VALUES
+((SELECT id FROM colegios WHERE codigo_institucion = 'GGMAR'), 'SA', 'SEDE A INSTITUTO GABRIEL GARCIA MARQUEZ', 'GGMARSA'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'GGMAR'), 'SB', 'SEDE B INSTITUTO CARACOLI', 'GGMARSB');
+
+-- INSTITUTO COMUNITARIO MINCA
+INSERT INTO sedes (colegio_id, codigo_sede, nombre, codigo_completo) VALUES
+((SELECT id FROM colegios WHERE codigo_institucion = 'CMINC'), 'SA', 'SEDE A INSTITUTO COMUNITARIO MINCA', 'CMINCSA'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'CMINC'), 'SB', 'SEDE B INSTITUTO FRANCISCO JOSE DE CALDAS', 'CMINCSB'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'CMINC'), 'SC', 'SEDE C INSTITUTO ANTONIO JOSE DE SUCRE', 'CMINCSC'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'CMINC'), 'SD', 'SEDE D INSTITUTO BELLAVISTA', 'CMINCSD');
+
+-- INSTITUTO RAFAEL POMBO
+INSERT INTO sedes (colegio_id, codigo_sede, nombre, codigo_completo) VALUES
+((SELECT id FROM colegios WHERE codigo_institucion = 'RPOMB'), 'SA', 'SEDE A INSTITUTO RAFAEL POMBO', 'RPOMBSA');
+
+-- COLEGIO TECNICO MICROEMPRESARIAL EL CARMEN
+INSERT INTO sedes (colegio_id, codigo_sede, nombre, codigo_completo) VALUES
+((SELECT id FROM colegios WHERE codigo_institucion = 'TMCAR'), 'SA', 'SEDE A COLEGIO TECNICO MICROEMPRESARIAL EL CARMEN', 'TMCARSA'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'TMCAR'), 'SB', 'SEDE B INSTITUTO JOSE ANTONIO MORALES', 'TMCARSB'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'TMCAR'), 'SC', 'SEDE C INSTITUTO EL CARMEN', 'TMCARSC'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'TMCAR'), 'SD', 'SEDE D INSTITUTO VILLALUZ', 'TMCARSD'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'TMCAR'), 'SE', 'SEDE E INSTITUTO RURAL VERICUTE', 'TMCARSE');
+
+-- INSTITUTO AGROPECUARIO GUSTAVO DUARTE ALEMAN
+INSERT INTO sedes (colegio_id, codigo_sede, nombre, codigo_completo) VALUES
+((SELECT id FROM colegios WHERE codigo_institucion = 'AGDALE'), 'SA', 'SEDE A INSTITUTO GUSTAVO DUARTE ALEMAN', 'AGDALESA'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'AGDALE'), 'SB', 'SEDE B INSTITUTO ALTO DE SAN JOSE', 'AGDALESB'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'AGDALE'), 'SC', 'SEDE C INSTITUTO RURAL LA MESETAS', 'AGDALESC'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'AGDALE'), 'SD', 'SEDE D INSTITUTO RURAL AGUA BLANCA', 'AGDALESD'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'AGDALE'), 'SE', 'SEDE E INSTITUTO RURAL ROSABLANCA', 'AGDALESE'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'AGDALE'), 'SF', 'SEDE F INSTITUTO RURAL BUENA VISTA', 'AGDALESF'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'AGDALE'), 'SG', 'SEDE G INSTITUTO RURAL SAN ANTONIO', 'AGDALESG'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'AGDALE'), 'SH', 'SEDE H INSTITUTO RURAL LA EMPRESA', 'AGDALESH');
+
+-- COLEGIO ECOLOGICO DE FLORIDABLANCA
+INSERT INTO sedes (colegio_id, codigo_sede, nombre, codigo_completo) VALUES
+((SELECT id FROM colegios WHERE codigo_institucion = 'CEFLOR'), 'SA', 'SEDE A COLEGIO ECOLOGICO DE FLORIDABLANCA', 'CEFLORSA'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'CEFLOR'), 'SB', 'SEDE B INSTITUTO RURAL CASIANO BAJO', 'CEFLORSB'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'CEFLOR'), 'SC', 'SEDE C INSTITUTO RURAL ALTO DE MANTILLA', 'CEFLORSC'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'CEFLOR'), 'SD', 'SEDE D INSTITUTO RURAL LA JUDIA', 'CEFLORSD'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'CEFLOR'), 'SE', 'SEDE E INSTITUTO RURAL GUAYANAS', 'CEFLORSE'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'CEFLOR'), 'SF', 'SEDE F INSTITUTO RURAL HELECHALES', 'CEFLORSF'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'CEFLOR'), 'SG', 'SEDE G INSTITUTO RURAL ALSACIA', 'CEFLORSG'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'CEFLOR'), 'SH', 'SEDE H INSTITUTO RURAL LOS CAUCHOS', 'CEFLORSH'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'CEFLOR'), 'SI', 'SEDE I INSTITUTO RURAL PALMERAS', 'CEFLORSI'),
+((SELECT id FROM colegios WHERE codigo_institucion = 'CEFLOR'), 'SJ', 'SEDE J INSTITUTO RURAL VALLE DE RUITOQUE', 'CEFLORSJ');
+
+
+
+-- Insertar grados para cada sede
+INSERT INTO grados (sede_id, grado, nivel)
+SELECT 
+    s.id as sede_id,
+    g.grado,
+    CASE 
+        WHEN g.grado::int <= 5 THEN 'Primaria'
+        WHEN g.grado::int <= 9 THEN 'Secundaria'
+        ELSE 'Media'
+    END as nivel
+FROM sedes s
+CROSS JOIN (
+    VALUES ('1'),('2'),('3'),('4'),('5'),('6'),('7'),('8'),('9'),('10'),('11')
+) as g(grado);
+
+-- Verificar la inserción
+SELECT 
+    c.nombre as colegio,
+    s.nombre as sede,
+    g.grado,
+    g.nivel
+FROM grados g
+JOIN sedes s ON g.sede_id = s.id
+JOIN colegios c ON s.colegio_id = c.id
+ORDER BY c.nombre, s.nombre, g.grado::int;
+
+
+
+--------------------------------
+-- 1. Primero creamos la institución de prueba KANDO
+INSERT INTO colegios (codigo_institucion, nombre) 
+VALUES ('KANDO', 'INSTITUCIÓN DE PRUEBA KANDO');
+
+-- 2. Luego creamos la sede principal (SA)
+INSERT INTO sedes (
+    colegio_id, 
+    codigo_sede, 
+    nombre, 
+    codigo_completo
+) 
+VALUES (
+    (SELECT id FROM colegios WHERE codigo_institucion = 'KANDO'),
+    'SA',
+    'SEDE A - PRUEBAS KANDO',
+    'KANDOSA'
+);
+
+-- 3. Finalmente creamos tu usuario como administrador
+INSERT INTO usuarios (
+    cedula,
+    nombres,
+    apellidos,
+    email,
+    telefono,
+    password_hash,
+    codigo_institucion,
+    debe_cambiar_password
+) 
+VALUES (
+    '1097910139',  -- Reemplaza esto con tu número de cédula real
+    'Carlos Alberto',
+    'García Córdoba',
+    'carlosgarciacordoba2022@gmail.com',  -- Puedes cambiar este email
+    '3212833963',  -- Reemplaza con tu número de teléfono real
+    crypt('Kando@2023', gen_salt('bf')),  -- Contraseña inicial: Kando@2023
+    'KANDOSA',
+    false
+);
