@@ -5797,6 +5797,121 @@
                                     </div>
                                 </div>
 
+                                <!-- Valoración por áreas -->
+                                <h3 class="section-letter">Valoración por áreas</h3>
+                                
+                                <div class="areas-evaluation-section">
+                                    <div class="areas-evaluation-table">
+                                        <table class="areas-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 20%;">Área</th>
+                                                    <th style="width: 25%;">Fortalezas</th>
+                                                    <th style="width: 30%;">Debilidades (áreas por mejorar del estudiante)</th>
+                                                    <th style="width: 25%;">Recomendaciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="areasTableBody">
+                                                <tr class="area-row">
+                                                    <td>
+                                                        <select name="area1" id="area1" class="form-control area-select">
+                                                            <option value="">Cargando asignaturas...</option>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <textarea name="fortalezas1" id="fortalezas1" rows="4" 
+                                                                placeholder="Describa las fortalezas observadas en esta área..."
+                                                                class="form-control area-textarea"></textarea>
+                                                    </td>
+                                                    <td>
+                                                        <textarea name="debilidades1" id="debilidades1" rows="4" 
+                                                                placeholder="Describa las debilidades o áreas por mejorar..."
+                                                                class="form-control area-textarea"></textarea>
+                                                    </td>
+                                                    <td>
+                                                        <textarea name="recomendaciones1" id="recomendaciones1" rows="4" 
+                                                                placeholder="Escriba las recomendaciones para mejorar..."
+                                                                class="form-control area-textarea"></textarea>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        
+                                        <!-- Botón para agregar más áreas -->
+                                        <div class="add-area-container">
+                                            <button type="button" class="btn-add-area" onclick="agregarNuevaArea()">
+                                                <i class="fas fa-plus"></i> Agregar otra área
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Análisis de barreras -->
+                                <h3 class="section-letter">Análisis de barreras</h3>
+                                
+                                <div class="barriers-analysis-intro">
+                                    <p>Estas barreras son del contexto, no son debilidades del estudiante, sino barreras del entorno respecto a su aprendizaje. Recuerde que estas barreras deben estar en coherencia con el anexo 3, en donde se deben mencionar según sea el caso, y los ajustes van direccionados a eliminar las posibles barreras durante el proceso de aprendizaje</p>
+                                </div>
+
+                                <div class="barriers-analysis-section">
+                                    <div class="barriers-table">
+                                        <div class="barrier-row">
+                                            <div class="barrier-label">
+                                                <strong>Barreras Actitudinales:</strong>
+                                            </div>
+                                            <div class="barrier-content">
+                                                <textarea name="barrerasActitudinales" id="barrerasActitudinales" rows="4" 
+                                                        placeholder="Describa las barreras actitudinales identificadas en el entorno del estudiante..."
+                                                        class="form-control barrier-textarea"></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="barrier-row">
+                                            <div class="barrier-label">
+                                                <strong>Barreras Arquitectónicas:</strong>
+                                            </div>
+                                            <div class="barrier-content">
+                                                <textarea name="barrerasArquitectonicas" id="barrerasArquitectonicas" rows="4" 
+                                                        placeholder="Describa las barreras arquitectónicas identificadas en el entorno del estudiante..."
+                                                        class="form-control barrier-textarea"></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="barrier-row">
+                                            <div class="barrier-label">
+                                                <strong>Barreras De Acceso A Información Y Comunicaciones:</strong>
+                                            </div>
+                                            <div class="barrier-content">
+                                                <textarea name="barrerasInformacion" id="barrerasInformacion" rows="4" 
+                                                        placeholder="Describa las barreras de acceso a información y comunicaciones identificadas..."
+                                                        class="form-control barrier-textarea"></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="barrier-row">
+                                            <div class="barrier-label">
+                                                <strong>Barreras Organizativas:</strong>
+                                            </div>
+                                            <div class="barrier-content">
+                                                <textarea name="barrerasOrganizativas" id="barrerasOrganizativas" rows="4" 
+                                                        placeholder="Describa las barreras organizativas identificadas en el entorno del estudiante..."
+                                                        class="form-control barrier-textarea"></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="barrier-row">
+                                            <div class="barrier-label">
+                                                <strong>Barreras Metodológica / Pedagógicas:</strong>
+                                            </div>
+                                            <div class="barrier-content">
+                                                <textarea name="barrerasMetodologicas" id="barrerasMetodologicas" rows="4" 
+                                                        placeholder="Describa las barreras metodológicas y pedagógicas identificadas..."
+                                                        class="form-control barrier-textarea"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <!-- Botones de acción para Anexo 2 -->
                                 <div class="form-actions">
                                     <button type="button" class="btn-secondary" onclick="limpiarAnexo2()">

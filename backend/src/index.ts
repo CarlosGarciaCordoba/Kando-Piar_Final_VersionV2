@@ -17,6 +17,7 @@ import colegiosRoutes from './api/routes/colegios.routes';
 import nivelesEducativosRoutes from './api/routes/niveles-educativos.routes';
 import ingresosPromediosMensualesRoutes from './api/routes/ingresos-promedios-mensuales.routes';
 import relacionesEstudianteRoutes from './api/routes/relaciones-estudiante.routes';
+import asignaturasRoutes from './api/routes/asignaturas.routes';
 import geminiAnalysisRoutes from './api/routes/gemini-analysis.routes';
 import { errorHandler } from './middleware/errorHandler';
 
@@ -53,6 +54,7 @@ app.use('/api/colegios', colegiosRoutes);
 app.use('/api/niveles-educativos', nivelesEducativosRoutes);
 app.use('/api/ingresos-promedios-mensuales', ingresosPromediosMensualesRoutes);
 app.use('/api/relaciones-estudiante', relacionesEstudianteRoutes);
+app.use('/api/asignaturas', asignaturasRoutes);
 app.use('/api/gemini', geminiAnalysisRoutes);
 
 // Ruta de prueba

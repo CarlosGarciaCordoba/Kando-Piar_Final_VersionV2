@@ -1406,4 +1406,536 @@ label[for="observacionesEntornos"] {
     border-color: var(--primary-color);
 }
 
+/* Estilos para la sección de Valoración por áreas */
+.areas-evaluation-section {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
 
+.areas-evaluation-table {
+    width: 100%;
+    overflow-x: auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
+}
+
+.areas-table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+    background: white;
+}
+
+.areas-table thead {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+}
+
+.areas-table th {
+    padding: 15px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 14px;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+}
+
+.areas-table th:last-child {
+    border-right: none;
+}
+
+.areas-table td {
+    padding: 15px 12px;
+    border-bottom: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    vertical-align: top;
+    background: white;
+}
+
+.areas-table td:last-child {
+    border-right: none;
+}
+
+.area-row:last-child td {
+    border-bottom: none;
+}
+
+.area-row:hover {
+    background-color: rgba(79, 134, 247, 0.03);
+}
+
+/* Estilos para el select de áreas */
+.area-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    background-color: white;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.area-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.1);
+    background-color: rgba(79, 134, 247, 0.02);
+}
+
+.area-select:hover {
+    border-color: var(--primary-color);
+}
+
+/* Estilos para los textareas en la tabla de áreas */
+.area-textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-color);
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+.area-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.1);
+    background-color: rgba(79, 134, 247, 0.02);
+}
+
+.area-textarea:hover {
+    border-color: var(--primary-color);
+}
+
+.area-textarea::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+    opacity: 0.7;
+}
+
+/* Contenedor del botón agregar área */
+.add-area-container {
+    padding: 20px;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(79, 134, 247, 0.02), rgba(138, 43, 226, 0.02));
+    border-top: 1px solid var(--border-color);
+}
+
+/* Botón para agregar nueva área */
+.btn-add-area {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+}
+
+.btn-add-area:hover {
+    background: linear-gradient(135deg, #218838, #1da88a);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.btn-add-area:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+}
+
+.btn-add-area i {
+    font-size: 12px;
+}
+
+/* Estilos responsivos para la tabla de áreas */
+@media (max-width: 1200px) {
+    .areas-table {
+        font-size: 13px;
+        min-width: 800px;
+    }
+    
+    .areas-table th,
+    .areas-table td {
+        padding: 12px 8px;
+    }
+    
+    .area-textarea {
+        min-height: 70px;
+        font-size: 12px;
+    }
+    
+    .area-select {
+        font-size: 13px;
+        padding: 8px 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .areas-evaluation-table {
+        border-radius: 8px;
+    }
+    
+    .areas-table {
+        font-size: 12px;
+        min-width: 700px;
+    }
+    
+    .areas-table th,
+    .areas-table td {
+        padding: 10px 6px;
+    }
+    
+    .area-textarea {
+        min-height: 60px;
+        font-size: 11px;
+        padding: 8px 10px;
+    }
+    
+    .area-select {
+        font-size: 12px;
+        padding: 6px 8px;
+    }
+    
+    .btn-add-area {
+        font-size: 13px;
+        padding: 10px 20px;
+    }
+    
+    .add-area-container {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .areas-table {
+        min-width: 600px;
+    }
+    
+    .areas-table th {
+        font-size: 11px;
+        padding: 8px 4px;
+    }
+    
+    .areas-table td {
+        padding: 8px 4px;
+    }
+}
+
+/* Estilos para la sección de Análisis de barreras */
+.barriers-analysis-intro {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(79, 134, 247, 0.08), rgba(138, 43, 226, 0.05));
+    border: 1px solid rgba(79, 134, 247, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(79, 134, 247, 0.1);
+}
+
+.barriers-analysis-intro p {
+    margin: 0;
+    color: #2c5aa0;
+    font-size: 14px;
+    line-height: 1.6;
+    font-weight: 500;
+    text-align: justify;
+}
+
+.barriers-analysis-section {
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.barriers-table {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.barrier-row {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.3s ease;
+}
+
+.barrier-row:last-child {
+    border-bottom: none;
+}
+
+.barrier-row:hover {
+    background-color: rgba(79, 134, 247, 0.03);
+}
+
+.barrier-label {
+    width: 30%;
+    padding: 20px 15px;
+    background: linear-gradient(135deg, rgba(79, 134, 247, 0.1), rgba(138, 43, 226, 0.1));
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.barrier-label strong {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.barrier-content {
+    width: 70%;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+}
+
+/* Estilos para los textareas de barreras */
+.barrier-textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 12px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-color);
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+.barrier-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.1);
+    background-color: rgba(79, 134, 247, 0.02);
+}
+
+.barrier-textarea:hover {
+    border-color: var(--primary-color);
+}
+
+.barrier-textarea::placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+    opacity: 0.7;
+}
+
+/* Estilos responsivos para análisis de barreras */
+@media (max-width: 1200px) {
+    .barriers-analysis-intro {
+        padding: 15px;
+    }
+    
+    .barriers-analysis-intro p {
+        font-size: 13px;
+    }
+    
+    .barrier-label {
+        width: 35%;
+        padding: 15px 12px;
+        font-size: 13px;
+    }
+    
+    .barrier-content {
+        width: 65%;
+        padding: 12px;
+    }
+    
+    .barrier-textarea {
+        min-height: 70px;
+        font-size: 12px;
+        padding: 10px 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .barrier-row {
+        flex-direction: column;
+    }
+    
+    .barrier-label {
+        width: 100%;
+        padding: 12px 15px;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        justify-content: flex-start;
+        font-size: 12px;
+    }
+    
+    .barrier-content {
+        width: 100%;
+        padding: 15px;
+    }
+    
+    .barrier-textarea {
+        min-height: 60px;
+        font-size: 11px;
+        padding: 8px 10px;
+    }
+    
+    .barriers-analysis-intro {
+        padding: 12px;
+    }
+    
+    .barriers-analysis-intro p {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .barriers-table {
+        border-radius: 8px;
+        margin: 0 -5px;
+    }
+    
+    .barrier-label {
+        padding: 10px 12px;
+        font-size: 11px;
+    }
+    
+    .barrier-content {
+        padding: 12px;
+    }
+    
+    .barrier-textarea {
+        font-size: 10px;
+        min-height: 50px;
+    }
+    
+    .barriers-analysis-intro {
+        margin: 0 -5px 20px -5px;
+        padding: 10px;
+    }
+    
+    .barriers-analysis-intro p {
+        font-size: 11px;
+    }
+}
+
+/* Estilos para notificaciones de barreras automáticas */
+.notification-barriers {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    z-index: 10000;
+    animation: slideInRight 0.3s ease;
+    min-width: 300px;
+    max-width: 400px;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.notification-text {
+    flex: 1;
+}
+
+.notification-text strong {
+    display: block;
+    margin-bottom: 2px;
+}
+
+.notification-text small {
+    opacity: 0.9;
+    font-size: 12px;
+}
+
+.notification-content i.fa-check-circle {
+    font-size: 18px;
+    color: #ffffff;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    margin-left: auto;
+}
+
+.notification-close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Animación para la notificación */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Estilos para textareas que se llenan automáticamente */
+.barrier-textarea.auto-filled {
+    background-color: rgba(79, 134, 247, 0.1) !important;
+    border-color: var(--primary-color) !important;
+    transition: all 0.3s ease;
+}
+
+/* Estilos responsivos para notificaciones */
+@media (max-width: 768px) {
+    .notification-barriers {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+        max-width: none;
+    }
+    
+    .notification-content {
+        font-size: 13px;
+        gap: 8px;
+    }
+    
+    .notification-content i.fa-check-circle {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .notification-barriers {
+        padding: 12px 15px;
+    }
+    
+    .notification-content {
+        font-size: 12px;
+        gap: 6px;
+    }
+}

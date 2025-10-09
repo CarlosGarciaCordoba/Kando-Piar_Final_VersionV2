@@ -3377,11 +3377,732 @@ const GeminiAnalysis = (function() {
     };
 })();
 
+// Variables para el manejo de áreas dinámicas
+let contadorAreas = 1;
+
+// Función para agregar nuevas áreas de evaluación
+async function agregarNuevaArea() {
+    contadorAreas++;
+    
+    const tbody = document.getElementById('areasTableBody');
+    if (!tbody) {
+        console.error('No se encontró el tbody de la tabla de áreas');
+        return;
+    }
+    
+    const nuevaFila = document.createElement('tr');
+    nuevaFila.className = 'area-row';
+    nuevaFila.innerHTML = `
+        <td>
+            <select name="area${contadorAreas}" id="area${contadorAreas}" class="form-control area-select">
+                <option value="">Cargando asignaturas...</option>
+            </select>
+        </td>
+        <td>
+            <textarea name="fortalezas${contadorAreas}" id="fortalezas${contadorAreas}" rows="4" 
+                    placeholder="Describa las fortalezas observadas en esta área..."
+                    class="form-control area-textarea"></textarea>
+        </td>
+        <td>
+            <textarea name="debilidades${contadorAreas}" id="debilidades${contadorAreas}" rows="4" 
+                    placeholder="Describa las debilidades o áreas por mejorar..."
+                    class="form-control area-textarea"></textarea>
+        </td>
+        <td>
+            <textarea name="recomendaciones${contadorAreas}" id="recomendaciones${contadorAreas}" rows="4" 
+                    placeholder="Escriba las recomendaciones para mejorar..."
+                    class="form-control area-textarea"></textarea>
+        </td>
+    `;
+    
+    tbody.appendChild(nuevaFila);
+    
+    // Poblar el select con las asignaturas
+    const nuevoSelect = document.getElementById(`area${contadorAreas}`);
+    if (nuevoSelect) {
+        await poblarSelectAsignaturas(nuevoSelect);
+    }
+    
+    // Desplazarse suavemente hacia la nueva fila
+    nuevaFila.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center' 
+    });
+    
+    // Enfocar el select de la nueva fila después de un pequeño delay
+    setTimeout(() => {
+        if (nuevoSelect) {
+            nuevoSelect.focus();
+        }
+    }, 300);
+}
+
+// Función para obtener todas las áreas evaluadas (útil para el guardado)
+function obtenerAreasEvaluadas() {
+    const areas = [];
+    const filas = document.querySelectorAll('.area-row');
+    
+    filas.forEach((fila, index) => {
+        const numeroArea = index + 1;
+        const areaSelect = document.getElementById(`area${numeroArea}`);
+        const fortalezasTextarea = document.getElementById(`fortalezas${numeroArea}`);
+        const debilidadesTextarea = document.getElementById(`debilidades${numeroArea}`);
+        const recomendacionesTextarea = document.getElementById(`recomendaciones${numeroArea}`);
+        
+        if (areaSelect && fortalezasTextarea && debilidadesTextarea && recomendacionesTextarea) {
+            const area = areaSelect.value;
+            const fortalezas = fortalezasTextarea.value.trim();
+            const debilidades = debilidadesTextarea.value.trim();
+            const recomendaciones = recomendacionesTextarea.value.trim();
+            
+            // Solo agregar si hay al menos un campo completado
+            if (area || fortalezas || debilidades || recomendaciones) {
+                areas.push({
+                    area,
+                    fortalezas,
+                    debilidades,
+                    recomendaciones
+                });
+            }
+        }
+    });
+    
+    return areas;
+}
+
+// Función para validar las áreas antes del guardado
+function validarAreas() {
+    const areas = obtenerAreasEvaluadas();
+    const errores = [];
+    
+    areas.forEach((area, index) => {
+        if (area.area && (!area.fortalezas || !area.debilidades || !area.recomendaciones)) {
+            errores.push(`Área ${index + 1}: Si selecciona un área, complete todos los campos.`);
+        }
+    });
+    
+    return {
+        valido: errores.length === 0,
+        errores
+    };
+}
+
+// Variables para cache de asignaturas
+let asignaturasCache = null;
+
+// Función para cargar asignaturas desde la API
+async function cargarAsignaturas() {
+    try {
+        // Si ya tenemos las asignaturas en cache, las retornamos
+        if (asignaturasCache) {
+            return asignaturasCache;
+        }
+        
+        const response = await fetch('/api/asignaturas');
+        const data = await response.json();
+        
+        if (data.success) {
+            asignaturasCache = data.data;
+            return asignaturasCache;
+        } else {
+            console.error('Error al cargar asignaturas:', data.message);
+            return [];
+        }
+    } catch (error) {
+        console.error('Error al conectar con la API de asignaturas:', error);
+        // Devolver asignaturas por defecto en caso de error
+        return [
+            { id_asignatura: 1, nombre: 'Lengua Castellana' },
+            { id_asignatura: 2, nombre: 'Matemáticas' },
+            { id_asignatura: 3, nombre: 'Ciencias Naturales' },
+            { id_asignatura: 4, nombre: 'Ciencias Sociales' },
+            { id_asignatura: 5, nombre: 'Educación Artística' },
+            { id_asignatura: 6, nombre: 'Educación Física, Recreación y Deporte' },
+            { id_asignatura: 7, nombre: 'Educación Religiosa o Ética y Valores' },
+            { id_asignatura: 8, nombre: 'Filosofía' },
+            { id_asignatura: 9, nombre: 'Química' },
+            { id_asignatura: 10, nombre: 'Física' }
+        ];
+    }
+}
+
+// Función para poblar un select con asignaturas
+async function poblarSelectAsignaturas(selectElement) {
+    try {
+        const asignaturas = await cargarAsignaturas();
+        
+        // Limpiar el select
+        selectElement.innerHTML = '<option value="">Seleccione un área</option>';
+        
+        // Agregar cada asignatura como opción
+        asignaturas.forEach(asignatura => {
+            const option = document.createElement('option');
+            option.value = asignatura.id_asignatura;
+            option.textContent = asignatura.nombre;
+            selectElement.appendChild(option);
+        });
+        
+    } catch (error) {
+        console.error('Error al poblar select de asignaturas:', error);
+        selectElement.innerHTML = '<option value="">Error al cargar asignaturas</option>';
+    }
+}
+
+// Función para inicializar todos los selects de asignaturas
+async function inicializarSelectsAsignaturas() {
+    try {
+        // Cargar el select inicial
+        const selectInicial = document.getElementById('area1');
+        if (selectInicial) {
+            await poblarSelectAsignaturas(selectInicial);
+        }
+        
+        // También cargar cualquier select adicional que ya exista
+        const todosLosSelects = document.querySelectorAll('.area-select');
+        for (const select of todosLosSelects) {
+            if (select.id !== 'area1') {
+                await poblarSelectAsignaturas(select);
+            }
+        }
+    } catch (error) {
+        console.error('Error al inicializar selects de asignaturas:', error);
+    }
+}
+
+// Función para obtener el análisis de barreras (útil para el guardado)
+function obtenerAnalisisBarreras() {
+    const barreras = {
+        actitudinales: document.getElementById('barrerasActitudinales')?.value?.trim() || '',
+        arquitectonicas: document.getElementById('barrerasArquitectonicas')?.value?.trim() || '',
+        informacion: document.getElementById('barrerasInformacion')?.value?.trim() || '',
+        organizativas: document.getElementById('barrerasOrganizativas')?.value?.trim() || '',
+        metodologicas: document.getElementById('barrerasMetodologicas')?.value?.trim() || ''
+    };
+    
+    return barreras;
+}
+
+// Función para validar el análisis de barreras
+function validarAnalisisBarreras() {
+    const barreras = obtenerAnalisisBarreras();
+    const errores = [];
+    
+    // Verificar que al menos una barrera esté completada
+    const tieneAlgunaBarrera = Object.values(barreras).some(barrera => barrera.length > 0);
+    
+    if (!tieneAlgunaBarrera) {
+        errores.push('Debe completar al menos una barrera en el análisis.');
+    }
+    
+    // Validar longitud mínima para barreras completadas
+    Object.entries(barreras).forEach(([tipo, contenido]) => {
+        if (contenido.length > 0 && contenido.length < 10) {
+            const nombres = {
+                actitudinales: 'Barreras Actitudinales',
+                arquitectonicas: 'Barreras Arquitectónicas',
+                informacion: 'Barreras de Acceso a Información',
+                organizativas: 'Barreras Organizativas',
+                metodologicas: 'Barreras Metodológicas/Pedagógicas'
+            };
+            errores.push(`${nombres[tipo]}: Debe proporcionar una descripción más detallada (mínimo 10 caracteres).`);
+        }
+    });
+    
+    return {
+        valido: errores.length === 0,
+        errores,
+        barreras
+    };
+}
+
+// Función para limpiar el análisis de barreras
+function limpiarAnalisisBarreras() {
+    document.getElementById('barrerasActitudinales').value = '';
+    document.getElementById('barrerasArquitectonicas').value = '';
+    document.getElementById('barrerasInformacion').value = '';
+    document.getElementById('barrerasOrganizativas').value = '';
+    document.getElementById('barrerasMetodologicas').value = '';
+}
+
+// Función para contar caracteres y mostrar estadísticas (opcional)
+function inicializarContadoresBarreras() {
+    const textareas = [
+        'barrerasActitudinales',
+        'barrerasArquitectonicas', 
+        'barrerasInformacion',
+        'barrerasOrganizativas',
+        'barrerasMetodologicas'
+    ];
+    
+    textareas.forEach(id => {
+        const textarea = document.getElementById(id);
+        if (textarea) {
+            // Agregar evento para mostrar contador de caracteres si se desea
+            textarea.addEventListener('input', function() {
+                // Opcional: mostrar contador de caracteres
+                const count = this.value.length;
+                // console.log(`${id}: ${count} caracteres`);
+            });
+        }
+    });
+}
+
+// Plantillas de barreras por categoría SIMAT
+const plantillasBarreras = {
+    'discapacidad_intelectual': {
+        actitudinales: `Situación observable:
+- Algunos docentes y compañeros asumen que el estudiante "no puede aprender" o "no entiende", lo que genera subvaloración de sus capacidades.
+- Se evidencia sobreprotección o, por el contrario, exclusión en actividades grupales.
+- No siempre se promueven actitudes de respeto, empatía ni colaboración hacia él.
+
+Impacto:
+- Baja autoestima y desmotivación.
+- Pérdida de confianza en sí mismo y dependencia excesiva del adulto.
+- Disminución en la participación y socialización con el grupo.`,
+
+        arquitectonicas: `Situación observable:
+- Aula con ruido, desorden visual o disposición del mobiliario que impide moverse libremente.
+- Falta de señalización o apoyos visuales en los espacios.
+- Ambientes poco estructurados para favorecer la atención.
+
+Impacto:
+- Distracción constante, desregulación sensorial y desorientación.
+- Dificultad para mantener la atención y organización personal.
+- Pérdida de tiempo efectivo de aprendizaje.`,
+
+        informacion: `Situación observable:
+- Se usa lenguaje abstracto o técnico, sin verificar la comprensión.
+- Las instrucciones son extensas y sin apoyo visual.
+- No se utilizan pictogramas, lenguaje sencillo ni mediaciones gráficas o gestuales.
+
+Impacto:
+- El estudiante no entiende con claridad lo que debe hacer.
+- Limita su expresión oral y escrita.
+- Se reduce la interacción con docentes y compañeros.`,
+
+        organizativas: `Situación observable:
+- Un solo docente atiende simultáneamente a 40 estudiantes, entre ellos uno o más con discapacidad.
+- No se dispone de tiempo suficiente para aplicar estrategias individualizadas ni realizar seguimiento personalizado.
+- El docente debe dividir su atención, priorizando el control del grupo sobre el acompañamiento pedagógico.
+- Falta de políticas institucionales claras de inclusión.
+- Escasa articulación entre docentes, orientadores y profesionales de apoyo.
+- PIAR desactualizado o desconocido por parte del equipo docente.
+- No se planifican reuniones de seguimiento o acompañamiento.
+
+Impacto:
+- Descoordinación en las estrategias pedagógicas.
+- Falta de coherencia en los apoyos ofrecidos.
+- Menor efectividad en los procesos de inclusión.
+- Recibe menor tiempo de interacción directa y orientación individual.
+- Se dificulta la aplicación de apoyos y ajustes razonables en clase.
+- Aumentan las posibilidades de desregulación emocional o desconexión del proceso.
+- El progreso académico y social se ve afectado por falta de retroalimentación o acompañamiento cercano.`,
+
+        metodologicas: `Situación observable:
+- Se aplican métodos uniformes centrados en la exposición oral, sin adaptación a los ritmos ni estilos de aprendizaje del estudiante.
+- Falta de uso de estrategias activas, experienciales y concretas.
+- No se incluyen apoyos visuales, juegos, experimentos o actividades manipulativas.
+- Las prácticas pedagógicas no contemplan la diversidad ni los ritmos individuales de aprendizaje.
+- No se diseñan experiencias significativas, contextualizadas ni funcionales para la vida diaria.
+- El docente no utiliza mediaciones pedagógicas variadas (juego, dramatización, proyectos, aprendizaje basado en retos).
+- No se promueve el aprendizaje cooperativo ni la tutoría entre pares.
+
+Impacto:
+- Dificultad para comprender y retener información.
+- Escasa participación y baja atención en clase.
+- Frustración ante tareas repetitivas o abstractas.
+- El estudiante se mantiene pasivo frente al aprendizaje.
+- Baja comprensión y retención de conceptos.
+- Desvinculación afectiva y cognitiva del proceso educativo.
+- Dificultad para desarrollar habilidades adaptativas y funcionales.`
+    },
+    
+    'discapacidad_fisica': {
+        actitudinales: `Situación observable:
+- Algunos docentes y compañeros consideran que el estudiante es "frágil" o "incapaz" de participar en actividades.
+- Se evidencia sobreprotección que limita su autonomía e independencia.
+- Actitudes de lástima o pena en lugar de reconocimiento de sus capacidades.
+
+Impacto:
+- Limitación en el desarrollo de la autonomía personal.
+- Baja autoestima y percepción negativa de sus capacidades.
+- Exclusión de actividades por consideraciones erróneas sobre sus limitaciones.`,
+
+        arquitectonicas: `Situación observable:
+- Barreras físicas como escalones, pasillos estrechos, puertas pesadas o mobiliario inadecuado.
+- Falta de rampas, barandas o espacios accesibles.
+- Ubicación inadecuada de recursos y materiales didácticos.
+
+Impacto:
+- Imposibilidad de acceder a ciertos espacios o recursos.
+- Dependencia de otros para movilizarse.
+- Limitación en la participación de actividades académicas y recreativas.`,
+
+        informacion: `Situación observable:
+- Falta de formatos accesibles para información escrita (tamaño de letra, contraste).
+- No se proporcionan ayudas técnicas para el acceso a la información.
+- Ausencia de alternativas comunicativas adaptadas a sus necesidades.
+
+Impacto:
+- Dificultad para acceder a contenidos académicos.
+- Limitación en la expresión y comunicación de ideas.
+- Exclusión de procesos de evaluación no adaptados.`,
+
+        organizativas: `Situación observable:
+- Falta de coordinación entre docentes y profesionales de apoyo.
+- No se contemplan tiempos adicionales para desplazamientos.
+- Ausencia de protocolos de emergencia adaptados.
+- Horarios rígidos que no consideran necesidades específicas.
+
+Impacto:
+- Fatiga excesiva por esfuerzos adicionales.
+- Pérdida de tiempo académico por desplazamientos.
+- Riesgo en situaciones de emergencia.`,
+
+        metodologicas: `Situación observable:
+- Metodologías que requieren habilidades motoras específicas sin alternativas.
+- Falta de adaptaciones en materiales y recursos didácticos.
+- No se utilizan tecnologías de apoyo disponibles.
+- Evaluaciones que no consideran las limitaciones físicas.
+
+Impacto:
+- Impossibilidad de demostrar conocimientos adquiridos.
+- Frustración ante tareas inadaptadas.
+- Desventaja en procesos de evaluación.`
+    },
+
+    'discapacidad_sensorial_auditiva': {
+        actitudinales: `Situación observable:
+- Se asume que el estudiante no puede participar en actividades orales o musicales.
+- Falta de paciencia para esperar interpretación o comunicación alternativa.
+- Actitudes de exclusión en conversaciones grupales.
+
+Impacto:
+- Aislamiento social y comunicativo.
+- Baja participación en actividades académicas y sociales.
+- Desarrollo limitado de habilidades comunicativas.`,
+
+        arquitectonicas: `Situación observable:
+- Espacios con mala acústica, ruido excesivo o reverberación.
+- Falta de sistemas de amplificación sonora.
+- Iluminación inadecuada que dificulta la lectura labial.
+
+Impacto:
+- Dificultad para percibir información auditiva.
+- Fatiga por esfuerzo adicional en la comunicación.
+- Limitación en la participación de actividades grupales.`,
+
+        informacion: `Situación observable:
+- Falta de interpretación en lengua de señas.
+- Ausencia de subtítulos en materiales audiovisuales.
+- No se utilizan recursos visuales como apoyo a la información oral.
+
+Impacto:
+- Pérdida de información académica importante.
+- Exclusión de contenidos multimedia.
+- Limitación en el acceso a explicaciones orales.`,
+
+        organizativas: `Situación observable:
+- No se cuenta con intérprete de lengua de señas.
+- Falta de capacitación docente en comunicación alternativa.
+- Ausencia de protocolos de comunicación adaptados.
+
+Impacto:
+- Barrera comunicativa constante.
+- Dependencia de terceros para la comunicación.
+- Limitación en la autonomía comunicativa.`,
+
+        metodologicas: `Situación observable:
+- Predominio de metodologías orales sin apoyo visual.
+- Falta de estrategias pedagógicas visuales y táctiles.
+- No se aprovechan las fortalezas visuales del estudiante.
+
+Impacto:
+- Dificultad para acceder a los contenidos académicos.
+- Limitación en el desarrollo de competencias comunicativas.
+- Desaprovechamiento del potencial de aprendizaje visual.`
+    },
+
+    'discapacidad_sensorial_visual': {
+        actitudinales: `Situación observable:
+- Se subestiman las capacidades del estudiante para realizar actividades académicas.
+- Actitudes de sobreprotección que limitan la exploración y autonomía.
+- Falta de confianza en las habilidades del estudiante.
+
+Impacto:
+- Limitación en el desarrollo de la independencia.
+- Baja autoestima y autoconfianza.
+- Restricción en las oportunidades de aprendizaje.`,
+
+        arquitectonicas: `Situación observable:
+- Obstáculos en los espacios de tránsito (mobiliario, objetos).
+- Falta de señalización táctil o auditiva.
+- Iluminación inadecuada para estudiantes con baja visión.
+
+Impacto:
+- Riesgo de accidentes y lesiones.
+- Dificultad para la orientación y movilidad.
+- Dependencia de otros para el desplazamiento.`,
+
+        informacion: `Situación observable:
+- Falta de materiales en braille o formatos accesibles.
+- Ausencia de descripciones de imágenes y gráficos.
+- No se utilizan tecnologías de apoyo como lectores de pantalla.
+
+Impacto:
+- Exclusión de contenidos visuales importantes.
+- Limitación en el acceso a información escrita.
+- Desventaja en procesos de evaluación.`,
+
+        organizativas: `Situación observable:
+- Falta de recursos técnicos y tecnológicos adaptados.
+- Ausencia de capacitación docente en estrategias para discapacidad visual.
+- No se contempla tiempo adicional para procesamiento de información.
+
+Impacto:
+- Limitación en el acceso a recursos académicos.
+- Fatiga por esfuerzo adicional en el procesamiento.
+- Desventaja competitiva frente a otros estudiantes.`,
+
+        metodologicas: `Situación observable:
+- Predominio de metodologías visuales sin alternativas táctiles o auditivas.
+- Falta de adaptación de materiales didácticos.
+- No se aprovechan los canales sensoriales disponibles.
+
+Impacto:
+- Dificultad para acceder a los contenidos curriculares.
+- Limitación en el desarrollo de competencias académicas.
+- Exclusión de actividades prácticas y experimentales.`
+    }
+};
+
+// Función para detectar y llenar automáticamente las barreras desde la API
+async function llenarBarrerasAutomaticas(categoriaSeleccionada) {
+    if (!categoriaSeleccionada) {
+        return;
+    }
+
+    try {
+        // Mapear nombres de categorías a IDs
+        const categoriasMap = {
+            'discapacidad_intelectual': 1,
+            'discapacidad_auditiva': 2,
+            'discapacidad_visual': 3,
+            'discapacidad_fisica': 4
+        };
+
+        const idCategoria = categoriasMap[categoriaSeleccionada];
+        if (!idCategoria) {
+            console.warn('Categoría no encontrada:', categoriaSeleccionada);
+            return;
+        }
+
+        // Realizar llamada a la API
+        const response = await fetch(`/api/plantillas-barreras/categoria/${idCategoria}`);
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (!data.success || !data.data) {
+            throw new Error('Formato de respuesta inválido');
+        }
+
+        const plantilla = data.data.barreras;
+        
+        // Mapear tipos de barreras a campos del formulario
+        const camposMap = {
+            'Actitudinales': 'barrerasActitudinales',
+            'Arquitectónicas': 'barrerasArquitectonicas',
+            'Información': 'barrerasInformacion',
+            'Organizativas': 'barrerasOrganizativas',
+            'Metodológicas': 'barrerasMetodologicas'
+        };
+
+        // Llenar cada campo de barrera
+        Object.entries(camposMap).forEach(([tipoBarrera, campoId]) => {
+            const campo = document.getElementById(campoId);
+            if (campo && plantilla[tipoBarrera] && plantilla[tipoBarrera].length > 0) {
+                // Concatenar todas las descripciones del tipo de barrera
+                const contenido = plantilla[tipoBarrera]
+                    .map(barrera => barrera.descripcion)
+                    .join('\n\n');
+                
+                campo.value = contenido;
+                
+                // Agregar una pequeña animación visual para indicar que se llenó
+                campo.style.backgroundColor = 'rgba(79, 134, 247, 0.1)';
+                setTimeout(() => {
+                    campo.style.backgroundColor = '';
+                }, 2000);
+            }
+        });
+
+        // Mostrar notificación al usuario
+        mostrarNotificacionBarreras(data.data.categoria || categoriaSeleccionada);
+
+    } catch (error) {
+        console.error('Error al cargar plantillas de barreras:', error);
+        
+        // Mostrar notificación de error al usuario
+        const notificacion = document.createElement('div');
+        notificacion.className = 'notification-barriers error';
+        notificacion.innerHTML = `
+            <div class="notification-content">
+                <i class="notification-icon">⚠️</i>
+                <div class="notification-text">
+                    <strong>Error</strong><br>
+                    No se pudieron cargar las plantillas de barreras automáticamente.
+                </div>
+                <button class="notification-close">×</button>
+            </div>
+        `;
+        
+        document.body.appendChild(notificacion);
+        
+        // Auto-cerrar después de 5 segundos
+        setTimeout(() => {
+            if (notificacion.parentNode) {
+                notificacion.remove();
+            }
+        }, 5000);
+        
+        // Evento para cerrar manualmente
+        notificacion.querySelector('.notification-close').addEventListener('click', () => {
+            notificacion.remove();
+        });
+    }
+}
+
+// Función para mostrar notificación
+function mostrarNotificacionBarreras(categoria) {
+    const nombreCategoria = categoria.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    
+    // Crear elemento de notificación
+    const notificacion = document.createElement('div');
+    notificacion.className = 'notification-barriers';
+    notificacion.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-check-circle"></i>
+            <div class="notification-text">
+                <strong>¡Barreras cargadas automáticamente!</strong>
+                <br>
+                <small>Categoría: ${nombreCategoria}</small>
+            </div>
+            <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(notificacion);
+    
+    // Auto-remove después de 8 segundos
+    setTimeout(() => {
+        if (notificacion.parentElement) {
+            notificacion.remove();
+        }
+    }, 8000);
+    
+    // Scroll suave hacia la sección de barreras
+    setTimeout(() => {
+        const seccionBarreras = document.querySelector('.barriers-analysis-section');
+        if (seccionBarreras) {
+            seccionBarreras.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }
+    }, 1000);
+}
+
+// Función para inicializar el sistema de barreras automáticas
+function inicializarBarrerasAutomaticas() {
+    // Buscar el select de diagnóstico SIMAT en el Anexo 1
+    const diagnosticoSelect = document.getElementById('diagnostico');
+    
+    if (diagnosticoSelect) {
+        diagnosticoSelect.addEventListener('change', function() {
+            const categoriaSeleccionada = this.value;
+            
+            // Mapear los valores del select a las claves de las plantillas
+            const mapeoValores = {
+                'discapacidad_intelectual': 'discapacidad_intelectual',
+                'discapacidad_fisica': 'discapacidad_fisica', 
+                'discapacidad_sensorial_auditiva': 'discapacidad_sensorial_auditiva',
+                'discapacidad_sensorial_visual': 'discapacidad_sensorial_visual',
+                'discapacidad_psicosocial': 'discapacidad_intelectual', // Usar misma plantilla
+                'discapacidad_multiple': 'discapacidad_intelectual', // Usar misma plantilla
+                'capacidades_excepcionales': 'discapacidad_intelectual' // Usar misma plantilla pero adaptada
+            };
+            
+            const plantillaKey = mapeoValores[categoriaSeleccionada];
+            
+            if (categoriaSeleccionada && plantillaKey && plantillasBarreras[plantillaKey]) {
+                // Confirmar con el usuario antes de llenar
+                const nombreCategoria = categoriaSeleccionada.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                const confirmar = confirm(`¿Desea llenar automáticamente el análisis de barreras para "${nombreCategoria}"?\n\nEsto sobrescribirá cualquier contenido existente en esos campos del Anexo 2.`);
+                
+                if (confirmar) {
+                    llenarBarrerasAutomaticas(plantillaKey);
+                }
+            }
+        });
+        
+        console.log('✅ Sistema de barreras automáticas inicializado correctamente');
+    } else {
+        console.warn('⚠️ No se encontró el select de diagnóstico SIMAT');
+        
+        // Intentar nuevamente después de un momento (por si el DOM no está completamente cargado)
+        setTimeout(() => {
+            const diagnosticoSelectRetry = document.getElementById('diagnostico');
+            if (diagnosticoSelectRetry) {
+                diagnosticoSelectRetry.addEventListener('change', function() {
+                    const categoriaSeleccionada = this.value;
+                    
+                    const mapeoValores = {
+                        'discapacidad_intelectual': 'discapacidad_intelectual',
+                        'discapacidad_fisica': 'discapacidad_fisica', 
+                        'discapacidad_sensorial_auditiva': 'discapacidad_sensorial_auditiva',
+                        'discapacidad_sensorial_visual': 'discapacidad_sensorial_visual',
+                        'discapacidad_psicosocial': 'discapacidad_intelectual',
+                        'discapacidad_multiple': 'discapacidad_intelectual',
+                        'capacidades_excepcionales': 'discapacidad_intelectual'
+                    };
+                    
+                    const plantillaKey = mapeoValores[categoriaSeleccionada];
+                    
+                    if (categoriaSeleccionada && plantillaKey && plantillasBarreras[plantillaKey]) {
+                        const nombreCategoria = categoriaSeleccionada.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        const confirmar = confirm(`¿Desea llenar automáticamente el análisis de barreras para "${nombreCategoria}"?\n\nEsto sobrescribirá cualquier contenido existente en esos campos del Anexo 2.`);
+                        
+                        if (confirmar) {
+                            llenarBarrerasAutomaticas(plantillaKey);
+                        }
+                    }
+                });
+                console.log('✅ Sistema de barreras automáticas inicializado (segundo intento)');
+            }
+        }, 3000);
+    }
+}
+
 // Inicializar el módulo cuando se carga la página
 document.addEventListener('DOMContentLoaded', function() {
     // Esperar un poco para asegurar que todo el DOM esté listo
     setTimeout(() => {
         GeminiAnalysis.inicializar();
+        
+        // Inicializar los selects de asignaturas
+        inicializarSelectsAsignaturas().catch(error => {
+            console.error('Error al inicializar selects de asignaturas:', error);
+        });
+        
+        // Inicializar contadores de barreras
+        inicializarContadoresBarreras();
+        
+        // Inicializar sistema de barreras automáticas
+        inicializarBarrerasAutomaticas();
         
         // Verificar configuración en desarrollo
         if (window.location.hostname === 'localhost') {
