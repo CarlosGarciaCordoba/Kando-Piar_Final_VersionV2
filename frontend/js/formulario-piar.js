@@ -1200,6 +1200,13 @@ const FormularioPIAR = (function() {
                 }));
             }
             
+            if (tipo === 'categorias-simat') {
+                return result.data.map(item => ({
+                    id: item.id_categoria_simat,
+                    nombre: item.nombre
+                }));
+            }
+            
             return result.data.map(item => ({
                 id: item.id,
                 nombre: item.nombre || item.descripcion
@@ -3576,7 +3583,8 @@ function obtenerAnalisisBarreras() {
         arquitectonicas: document.getElementById('barrerasArquitectonicas')?.value?.trim() || '',
         informacion: document.getElementById('barrerasInformacion')?.value?.trim() || '',
         organizativas: document.getElementById('barrerasOrganizativas')?.value?.trim() || '',
-        metodologicas: document.getElementById('barrerasMetodologicas')?.value?.trim() || ''
+        metodologicas: document.getElementById('barrerasMetodologicas')?.value?.trim() || '',
+        pedagogicas: document.getElementById('barrerasPedagogicas')?.value?.trim() || ''
     };
     
     return barreras;
@@ -3602,7 +3610,8 @@ function validarAnalisisBarreras() {
                 arquitectonicas: 'Barreras Arquitectónicas',
                 informacion: 'Barreras de Acceso a Información',
                 organizativas: 'Barreras Organizativas',
-                metodologicas: 'Barreras Metodológicas/Pedagógicas'
+                metodologicas: 'Barreras Metodológicas',
+                pedagogicas: 'Barreras Pedagógicas'
             };
             errores.push(`${nombres[tipo]}: Debe proporcionar una descripción más detallada (mínimo 10 caracteres).`);
         }
@@ -3622,6 +3631,7 @@ function limpiarAnalisisBarreras() {
     document.getElementById('barrerasInformacion').value = '';
     document.getElementById('barrerasOrganizativas').value = '';
     document.getElementById('barrerasMetodologicas').value = '';
+    document.getElementById('barrerasPedagogicas').value = '';
 }
 
 // Función para contar caracteres y mostrar estadísticas (opcional)
@@ -3631,7 +3641,8 @@ function inicializarContadoresBarreras() {
         'barrerasArquitectonicas', 
         'barrerasInformacion',
         'barrerasOrganizativas',
-        'barrerasMetodologicas'
+        'barrerasMetodologicas',
+        'barrerasPedagogicas'
     ];
     
     textareas.forEach(id => {
@@ -3714,6 +3725,18 @@ Impacto:
 - El estudiante se mantiene pasivo frente al aprendizaje.
 - Baja comprensión y retención de conceptos.
 - Desvinculación afectiva y cognitiva del proceso educativo.
+- Dificultad para desarrollar habilidades adaptativas y funcionales.`,
+        
+        pedagogicas: `Situación observable:
+- Las prácticas pedagógicas no contemplan la diversidad ni los ritmos individuales de aprendizaje.
+- No se diseñan experiencias significativas, contextualizadas ni funcionales para la vida diaria.
+- El docente no utiliza mediaciones pedagógicas variadas (juego, dramatización, proyectos, aprendizaje basado en retos).
+- No se promueve el aprendizaje cooperativo ni la tutoría entre pares.
+
+Impacto:
+- El estudiante se mantiene pasivo frente al aprendizaje.
+- Baja comprensión y retención de conceptos.
+- Desvinculación afectiva y cognitiva del proceso educativo.
 - Dificultad para desarrollar habilidades adaptativas y funcionales.`
     },
     
@@ -3768,7 +3791,18 @@ Impacto:
 Impacto:
 - Impossibilidad de demostrar conocimientos adquiridos.
 - Frustración ante tareas inadaptadas.
-- Desventaja en procesos de evaluación.`
+- Desventaja en procesos de evaluación.`,
+        
+        pedagogicas: `Situación observable:
+- Planificación de clases que no considera la diversidad motriz del estudiante.
+- Falta de actividades alternativas para participación sin esfuerzo físico excesivo.
+- No se promueve la autonomía ni la autoeficacia del estudiante.
+- Ausencia de trabajo colaborativo que fomente la inclusión.
+
+Impacto:
+- Participación limitada en experiencias de aprendizaje.
+- Dificultad para construir sentido de pertenencia y competencia.
+- Desvinculación del proceso educativo por falta de adecuación.`
     },
 
     'discapacidad_sensorial_auditiva': {
@@ -3820,7 +3854,17 @@ Impacto:
 Impacto:
 - Dificultad para acceder a los contenidos académicos.
 - Limitación en el desarrollo de competencias comunicativas.
-- Desaprovechamiento del potencial de aprendizaje visual.`
+- Desaprovechamiento del potencial de aprendizaje visual.`,
+        
+        pedagogicas: `Situación observable:
+- Proceso de enseñanza basado únicamente en la oralidad sin considerar el canal visual.
+- Falta de experiencias significativas que potencien la comunicación visual.
+- Escaso uso de metodologías colaborativas adaptadas a la comunidad sorda.
+
+Impacto:
+- Desconexión entre la enseñanza y la forma de acceso al conocimiento del estudiante.
+- Dificultad para consolidar aprendizajes duraderos.
+- Baja participación y desmotivación escolar.`
     },
 
     'discapacidad_sensorial_visual': {
@@ -3872,7 +3916,17 @@ Impacto:
 Impacto:
 - Dificultad para acceder a los contenidos curriculares.
 - Limitación en el desarrollo de competencias académicas.
-- Exclusión de actividades prácticas y experimentales.`
+- Exclusión de actividades prácticas y experimentales.`,
+        
+        pedagogicas: `Situación observable:
+- Falta de diversificación de estrategias didácticas con apoyos auditivos o táctiles.
+- No se promueven actividades de exploración sensorial y desarrollo de autonomía.
+- Explicaciones limitadas sin lenguaje descriptivo detallado.
+
+Impacto:
+- Aprendizaje superficial o memorístico.
+- Limitada comprensión de conceptos visuales o espaciales.
+- Escasa motivación y dependencia permanente del docente.`
     }
 };
 
@@ -3916,7 +3970,8 @@ async function llenarBarrerasAutomaticas(categoriaSeleccionada) {
             'Arquitectónicas': 'barrerasArquitectonicas',
             'Información': 'barrerasInformacion',
             'Organizativas': 'barrerasOrganizativas',
-            'Metodológicas': 'barrerasMetodologicas'
+            'Metodológicas': 'barrerasMetodologicas',
+            'Pedagógicas': 'barrerasPedagogicas'
         };
 
         // Llenar cada campo de barrera
@@ -4016,35 +4071,318 @@ function mostrarNotificacionBarreras(categoria) {
     }, 1000);
 }
 
+// Función auxiliar para mostrar indicador de carga con animación sorpresa
+function mostrarIndicadorCarga() {
+    // Crear el overlay con efecto de confeti
+    const overlay = document.createElement('div');
+    overlay.id = 'barreras-loading-overlay';
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        font-family: Arial, sans-serif;
+    `;
+    
+    // Crear el contenedor principal
+    const contenedor = document.createElement('div');
+    contenedor.style.cssText = `
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        max-width: 400px;
+        position: relative;
+        overflow: hidden;
+    `;
+    
+    // Añadir el efecto de brillo
+    const brillo = document.createElement('div');
+    brillo.style.cssText = `
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%);
+        animation: brillo 2s infinite;
+    `;
+    
+    // Añadir estilos de animación
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes brillo {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .confeti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ffd700;
+            animation: confeti 3s infinite;
+        }
+        @keyframes confeti {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Spinner elegante
+    const spinner = document.createElement('div');
+    spinner.style.cssText = `
+        width: 60px;
+        height: 60px;
+        border: 4px solid rgba(255,255,255,0.3);
+        border-top: 4px solid white;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        animation: rotate 1s linear infinite;
+    `;
+    
+    // Texto
+    const texto = document.createElement('h3');
+    texto.textContent = '🎯 Cargando Barreras Mágicas...';
+    texto.style.cssText = `
+        color: white;
+        margin: 0 0 10px 0;
+        font-size: 24px;
+        animation: pulse 2s infinite;
+    `;
+    
+    const subtexto = document.createElement('p');
+    subtexto.textContent = 'Analizando la categoría SIMAT seleccionada';
+    subtexto.style.cssText = `
+        color: rgba(255,255,255,0.8);
+        margin: 0;
+        font-size: 16px;
+    `;
+    
+    // Añadir confeti
+    for (let i = 0; i < 20; i++) {
+        const confeti = document.createElement('div');
+        confeti.className = 'confeti';
+        confeti.style.left = Math.random() * 100 + '%';
+        confeti.style.animationDelay = Math.random() * 3 + 's';
+        confeti.style.backgroundColor = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7'][Math.floor(Math.random() * 5)];
+        overlay.appendChild(confeti);
+    }
+    
+    contenedor.appendChild(brillo);
+    contenedor.appendChild(spinner);
+    contenedor.appendChild(texto);
+    contenedor.appendChild(subtexto);
+    overlay.appendChild(contenedor);
+    document.body.appendChild(overlay);
+    
+    return overlay;
+}
+
+// Función auxiliar para ocultar indicador de carga
+function ocultarIndicadorCarga() {
+    const overlay = document.getElementById('barreras-loading-overlay');
+    if (overlay) {
+        overlay.style.animation = 'fadeOut 0.5s ease-out';
+        setTimeout(() => {
+            overlay.remove();
+        }, 500);
+    }
+}
+
+// Función para cargar barreras desde el backend
+async function cargarBarrerasDesdeBackend(categoriaId) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/barreras/categoria/${categoriaId}`);
+        
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.success) {
+            throw new Error(data.message || 'Error al obtener barreras');
+        }
+        
+        return data.data;
+    } catch (error) {
+        console.error('Error al cargar barreras desde backend:', error);
+        throw error;
+    }
+}
+
+// Función para llenar barreras desde datos del backend
+function llenarBarrerasDesdeBackend(barrerasData) {
+    console.log('🎯 Llenando barreras desde backend:', barrerasData);
+    
+    // Mapear los campos del backend a los campos del formulario
+    const mapeoIdsFormulario = {
+        'actitudinales': 'barrerasActitudinales',
+        'arquitectonicas': 'barrerasArquitectonicas',
+        'de_acceso_a_informacion_y_comunicaciones': 'barrerasInformacion',
+        'organizativas': 'barrerasOrganizativas',
+        'metodologicas': 'barrerasMetodologicas',
+        'pedagogicas': 'barrerasPedagogicas'
+    };
+    
+    // Llenar cada campo con los datos correspondientes
+    Object.entries(mapeoIdsFormulario).forEach(([tipoBackend, idFormulario]) => {
+        const elemento = document.getElementById(idFormulario);
+        const barreraData = barrerasData.barreras[tipoBackend];
+        
+        if (elemento && barreraData) {
+            const contenido = `SITUACIÓN OBSERVABLE:
+${barreraData.situacion_observable}
+
+IMPACTO:
+${barreraData.impacto}
+
+AJUSTES Y ESTRATEGIAS:
+${barreraData.ajustes_estrategias}`;
+            
+            elemento.value = contenido;
+            
+            // Efecto visual de llenado
+            elemento.style.background = 'linear-gradient(90deg, #e8f5e8, transparent)';
+            elemento.style.transition = 'background 2s ease-out';
+            
+            setTimeout(() => {
+                elemento.style.background = '';
+            }, 2000);
+        }
+    });
+}
+
+// Función para mostrar notificación de éxito
+function mostrarNotificacionExito(categoriaData) {
+    const notificacion = document.createElement('div');
+    notificacion.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #4CAF50, #45a049);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(76, 175, 80, 0.3);
+        z-index: 10001;
+        max-width: 350px;
+        font-family: Arial, sans-serif;
+        animation: slideInRight 0.5s ease-out;
+    `;
+    
+    // Añadir animación CSS
+    if (!document.getElementById('notification-styles')) {
+        const style = document.createElement('style');
+        style.id = 'notification-styles';
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    notificacion.innerHTML = `
+        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+            <span style="font-size: 24px; margin-right: 10px;">🎉</span>
+            <strong style="font-size: 18px;">¡Barreras Cargadas Exitosamente!</strong>
+        </div>
+        <p style="margin: 5px 0; font-size: 14px;">
+            📋 Categoría: <strong>${categoriaData.categoria_nombre}</strong>
+        </p>
+        <p style="margin: 5px 0; font-size: 14px;">
+            🔢 Total de barreras: <strong>${categoriaData.total_barreras}</strong>
+        </p>
+        <p style="margin: 10px 0 0 0; font-size: 12px; opacity: 0.9;">
+            Los campos de análisis de barreras en el Anexo 2 han sido actualizados automáticamente.
+        </p>
+    `;
+    
+    document.body.appendChild(notificacion);
+    
+    // Auto-eliminar después de 5 segundos
+    setTimeout(() => {
+        notificacion.style.animation = 'slideOutRight 0.5s ease-out';
+        setTimeout(() => {
+            notificacion.remove();
+        }, 500);
+    }, 5000);
+    
+    // Permitir cerrar haciendo clic
+    notificacion.addEventListener('click', () => {
+        notificacion.style.animation = 'slideOutRight 0.5s ease-out';
+        setTimeout(() => {
+            notificacion.remove();
+        }, 500);
+    });
+}
+
 // Función para inicializar el sistema de barreras automáticas
 function inicializarBarrerasAutomaticas() {
     // Buscar el select de diagnóstico SIMAT en el Anexo 1
     const diagnosticoSelect = document.getElementById('diagnostico');
     
     if (diagnosticoSelect) {
-        diagnosticoSelect.addEventListener('change', function() {
-            const categoriaSeleccionada = this.value;
+        diagnosticoSelect.addEventListener('change', async function() {
+            const categoriaId = this.value;
+            const textoSeleccionado = this.options[this.selectedIndex].text;
             
-            // Mapear los valores del select a las claves de las plantillas
-            const mapeoValores = {
-                'discapacidad_intelectual': 'discapacidad_intelectual',
-                'discapacidad_fisica': 'discapacidad_fisica', 
-                'discapacidad_sensorial_auditiva': 'discapacidad_sensorial_auditiva',
-                'discapacidad_sensorial_visual': 'discapacidad_sensorial_visual',
-                'discapacidad_psicosocial': 'discapacidad_intelectual', // Usar misma plantilla
-                'discapacidad_multiple': 'discapacidad_intelectual', // Usar misma plantilla
-                'capacidades_excepcionales': 'discapacidad_intelectual' // Usar misma plantilla pero adaptada
-            };
-            
-            const plantillaKey = mapeoValores[categoriaSeleccionada];
-            
-            if (categoriaSeleccionada && plantillaKey && plantillasBarreras[plantillaKey]) {
-                // Confirmar con el usuario antes de llenar
-                const nombreCategoria = categoriaSeleccionada.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                const confirmar = confirm(`¿Desea llenar automáticamente el análisis de barreras para "${nombreCategoria}"?\n\nEsto sobrescribirá cualquier contenido existente en esos campos del Anexo 2.`);
+            if (categoriaId && categoriaId !== '') {
+                // Mostrar indicador de carga con animación sorpresa
+                const indicadorCarga = mostrarIndicadorCarga();
                 
-                if (confirmar) {
-                    llenarBarrerasAutomaticas(plantillaKey);
+                try {
+                    // Cargar barreras desde el backend
+                    const barrerasData = await cargarBarrerasDesdeBackend(categoriaId);
+                    
+                    // Simular un pequeño delay para mostrar la animación
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                    // Ocultar indicador de carga
+                    ocultarIndicadorCarga();
+                    
+                    // Llenar los campos con las barreras obtenidas
+                    llenarBarrerasDesdeBackend(barrerasData);
+                    
+                    // Mostrar notificación de éxito
+                    mostrarNotificacionExito(barrerasData);
+                    
+                    console.log('✅ Barreras cargadas exitosamente:', barrerasData);
+                    
+                } catch (error) {
+                    // Ocultar indicador de carga en caso de error
+                    ocultarIndicadorCarga();
+                    
+                    console.error('❌ Error al cargar barreras:', error);
+                    
+                    // Mostrar notificación de error
+                    alert(`❌ Error al cargar las barreras para "${textoSeleccionado}".\n\n` +
+                          `Por favor, verifica que el servidor esté funcionando y que existan barreras ` +
+                          `definidas para esta categoría SIMAT.\n\n` +
+                          `Error técnico: ${error.message}`);
                 }
             }
         });
@@ -4057,27 +4395,43 @@ function inicializarBarrerasAutomaticas() {
         setTimeout(() => {
             const diagnosticoSelectRetry = document.getElementById('diagnostico');
             if (diagnosticoSelectRetry) {
-                diagnosticoSelectRetry.addEventListener('change', function() {
-                    const categoriaSeleccionada = this.value;
+                diagnosticoSelectRetry.addEventListener('change', async function() {
+                    const categoriaId = this.value;
+                    const textoSeleccionado = this.options[this.selectedIndex].text;
                     
-                    const mapeoValores = {
-                        'discapacidad_intelectual': 'discapacidad_intelectual',
-                        'discapacidad_fisica': 'discapacidad_fisica', 
-                        'discapacidad_sensorial_auditiva': 'discapacidad_sensorial_auditiva',
-                        'discapacidad_sensorial_visual': 'discapacidad_sensorial_visual',
-                        'discapacidad_psicosocial': 'discapacidad_intelectual',
-                        'discapacidad_multiple': 'discapacidad_intelectual',
-                        'capacidades_excepcionales': 'discapacidad_intelectual'
-                    };
-                    
-                    const plantillaKey = mapeoValores[categoriaSeleccionada];
-                    
-                    if (categoriaSeleccionada && plantillaKey && plantillasBarreras[plantillaKey]) {
-                        const nombreCategoria = categoriaSeleccionada.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                        const confirmar = confirm(`¿Desea llenar automáticamente el análisis de barreras para "${nombreCategoria}"?\n\nEsto sobrescribirá cualquier contenido existente en esos campos del Anexo 2.`);
+                    if (categoriaId && categoriaId !== '') {
+                        // Mostrar indicador de carga con animación sorpresa
+                        const indicadorCarga = mostrarIndicadorCarga();
                         
-                        if (confirmar) {
-                            llenarBarrerasAutomaticas(plantillaKey);
+                        try {
+                            // Cargar barreras desde el backend
+                            const barrerasData = await cargarBarrerasDesdeBackend(categoriaId);
+                            
+                            // Simular un pequeño delay para mostrar la animación
+                            await new Promise(resolve => setTimeout(resolve, 2000));
+                            
+                            // Ocultar indicador de carga
+                            ocultarIndicadorCarga();
+                            
+                            // Llenar los campos con las barreras obtenidas
+                            llenarBarrerasDesdeBackend(barrerasData);
+                            
+                            // Mostrar notificación de éxito
+                            mostrarNotificacionExito(barrerasData);
+                            
+                            console.log('✅ Barreras cargadas exitosamente (segundo intento):', barrerasData);
+                            
+                        } catch (error) {
+                            // Ocultar indicador de carga en caso de error
+                            ocultarIndicadorCarga();
+                            
+                            console.error('❌ Error al cargar barreras (segundo intento):', error);
+                            
+                            // Mostrar notificación de error
+                            alert(`❌ Error al cargar las barreras para "${textoSeleccionado}".\n\n` +
+                                  `Por favor, verifica que el servidor esté funcionando y que existan barreras ` +
+                                  `definidas para esta categoría SIMAT.\n\n` +
+                                  `Error técnico: ${error.message}`);
                         }
                     }
                 });

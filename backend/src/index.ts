@@ -19,6 +19,7 @@ import ingresosPromediosMensualesRoutes from './api/routes/ingresos-promedios-me
 import relacionesEstudianteRoutes from './api/routes/relaciones-estudiante.routes';
 import asignaturasRoutes from './api/routes/asignaturas.routes';
 import geminiAnalysisRoutes from './api/routes/gemini-analysis.routes';
+import barrerasRoutes from './api/routes/barreras.routes';
 import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
@@ -56,6 +57,7 @@ app.use('/api/ingresos-promedios-mensuales', ingresosPromediosMensualesRoutes);
 app.use('/api/relaciones-estudiante', relacionesEstudianteRoutes);
 app.use('/api/asignaturas', asignaturasRoutes);
 app.use('/api/gemini', geminiAnalysisRoutes);
+app.use('/api/barreras', barrerasRoutes);
 
 // Ruta de prueba
 app.get('/', (_req: Request, res: Response) => {

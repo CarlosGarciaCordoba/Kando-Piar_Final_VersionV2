@@ -470,6 +470,24 @@ CREATE TABLE categorias_simat (
 );
 
 -- =============================================
+-- TABLA DE BARRERAS
+-- =============================================
+-- Contiene las barreras específicas por categoría SIMAT para el análisis PIAR
+-- =============================================
+CREATE TABLE barreras (
+    id_barrera SERIAL PRIMARY KEY,
+    id_categoria_simat INTEGER NOT NULL REFERENCES categorias_simat(id_categoria_simat),
+    tipo_barrera VARCHAR(100) NOT NULL,
+    situacion_observable TEXT NOT NULL,
+    impacto TEXT NOT NULL,
+    ajustes_estrategias TEXT NOT NULL,
+    orden INTEGER DEFAULT 1,
+    estado BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================
 -- TABLA DE GRUPOS ÉTNICOS
 -- =============================================
 -- Contiene los grupos étnicos reconocidos en Colombia
@@ -523,6 +541,9 @@ CREATE INDEX idx_frecuencias_rehabilitacion_nombre ON frecuencias_rehabilitacion
 CREATE INDEX idx_frecuencias_medicamentos_nombre ON frecuencias_medicamentos(nombre);
 CREATE INDEX idx_horarios_medicamentos_nombre ON horarios_medicamentos(nombre);
 CREATE INDEX idx_categorias_simat_nombre ON categorias_simat(nombre);
+CREATE INDEX idx_barreras_categoria ON barreras(id_categoria_simat);
+CREATE INDEX idx_barreras_tipo ON barreras(tipo_barrera);
+CREATE INDEX idx_barreras_categoria_tipo ON barreras(id_categoria_simat, tipo_barrera);
 CREATE INDEX idx_grupos_etnicos_nombre ON grupos_etnicos(nombre);
 CREATE INDEX idx_niveles_educativos_nombre ON niveles_educativos(nombre);
 CREATE INDEX idx_ingresos_promedios_mensuales_nombre ON ingresos_promedios_mensuales(nombre);
@@ -560,6 +581,9 @@ CREATE TRIGGER update_horarios_medicamentos_updated_at BEFORE UPDATE ON horarios
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_categorias_simat_updated_at BEFORE UPDATE ON categorias_simat
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_barreras_updated_at BEFORE UPDATE ON barreras
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_grupos_etnicos_updated_at BEFORE UPDATE ON grupos_etnicos
@@ -1936,6 +1960,660 @@ INSERT INTO asignaturas (id_asignatura, nombre, descripcion, estado) VALUES
 (9, 'Química', 'Asignatura de química', true),
 (10, 'Física', 'Asignatura de física', true);
 
+
+
+
+-- =============================================
+-- MIGRACIÓN TABLA DE BARRERAS PIAR
+-- Archivo temporal para ejecución manual
+-- Fecha: 9 de octubre de 2025
+-- =============================================
+
+-- =============================================
+-- 1. CREAR TABLA BARRERAS
+-- =============================================
+CREATE TABLE barreras (
+    id_barrera SERIAL PRIMARY KEY,
+    id_categoria_simat INTEGER NOT NULL REFERENCES categorias_simat(id_categoria_simat),
+    tipo_barrera VARCHAR(100) NOT NULL,
+    situacion_observable TEXT NOT NULL,
+    impacto TEXT NOT NULL,
+    ajustes_estrategias TEXT NOT NULL,
+    orden INTEGER DEFAULT 1,
+    estado BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- =============================================
+-- 2. CREAR ÍNDICES
+-- =============================================
+CREATE INDEX idx_barreras_categoria ON barreras(id_categoria_simat);
+CREATE INDEX idx_barreras_tipo ON barreras(tipo_barrera);
+CREATE INDEX idx_barreras_categoria_tipo ON barreras(id_categoria_simat, tipo_barrera);
+
+-- =============================================
+-- 3. CREAR TRIGGER
+-- =============================================
+CREATE TRIGGER update_barreras_updated_at BEFORE UPDATE ON barreras
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- =============================================
+-- 4. INSERTAR CATEGORÍAS SIMAT (SI NO EXISTEN)
+-- =============================================
+INSERT INTO categorias_simat (id_categoria_simat, nombre, descripcion, estado) VALUES
+(1, 'Discapacidad Física', 'Estudiantes con discapacidad física/motora que requieren adaptaciones para la movilidad y participación', true),
+(2, 'Discapacidad Auditiva', 'Estudiantes con discapacidad auditiva que requieren apoyos específicos para la comunicación', true),
+(3, 'Discapacidad Visual', 'Estudiantes con discapacidad visual que necesitan adaptaciones en materiales y metodologías', true),
+(4, 'Sordoceguera', 'Estudiantes con sordoceguera que requieren comunicación táctil y mediación especializada', true),
+(5, 'Discapacidad Intelectual', 'Estudiantes con discapacidad intelectual que requieren ajustes razonables en el proceso educativo', true),
+(6, 'Discapacidad Psicosocial', 'Estudiantes con discapacidad psicosocial que necesitan acompañamiento emocional y ambientes de bienestar', true),
+(7, 'Discapacidad Múltiple', 'Estudiantes con discapacidad múltiple que requieren apoyos multisensoriales y coordinación interdisciplinaria', true)
+ON CONFLICT (id_categoria_simat) DO UPDATE SET
+    nombre = EXCLUDED.nombre,
+    descripcion = EXCLUDED.descripcion,
+    estado = EXCLUDED.estado;
+
+-- =============================================
+-- 5. INSERTAR BARRERAS - DISCAPACIDAD FÍSICA (ID: 1)
+-- =============================================
+
+-- 1. Barrera Actitudinal - Discapacidad Física
+INSERT INTO barreras (id_categoria_simat, tipo_barrera, situacion_observable, impacto, ajustes_estrategias, orden) VALUES
+(1, 'Actitudinales',
+'- Algunos docentes o compañeros asumen que el estudiante "no puede realizar ciertas actividades" por su condición motora.
+- Se promueven actitudes de sobreprotección o compasión, limitando su autonomía.
+- No se estimula la participación activa ni el liderazgo en el grupo.
+- Ausencia de campañas de sensibilización sobre la discapacidad motora.',
+'- Baja autoestima y dependencia de otros.
+- Aislamiento y exclusión del trabajo en grupo.
+- Falta de confianza en sus capacidades y menor participación en clase.',
+'- Sensibilizar al grupo; promover la autonomía y la participación activa; reconocer sus capacidades; implementar campañas de inclusión.',
+1),
+
+-- 2. Barrera Arquitectónica - Discapacidad Física
+(1, 'Arquitectónicas',
+'- Escaleras, rampas inadecuadas o pisos resbaladizos dificultan la movilidad.
+- No hay ascensores, pasamanos o puertas accesibles.
+- El aula no cuenta con espacio suficiente para desplazarse en silla de ruedas.
+- Los baños no están adaptados ni señalizados.',
+'- Riesgo de accidentes o caídas.
+- Dependencia constante de otras personas.
+- Dificultad para llegar puntualmente a las clases o moverse dentro de la institución.',
+'- Adecuar rampas, pasamanos, ascensores; ubicar al estudiante en espacio accesible y seguro.',
+2),
+
+-- 3. Barrera de Acceso a Información y Comunicaciones - Discapacidad Física
+(1, 'De Acceso A Información Y Comunicaciones',
+'- Las orientaciones se dan sin verificar si el estudiante logra ejecutar las acciones físicas requeridas.
+- Se utilizan términos inadecuados o expresiones peyorativas ("inválido", "minusválido").
+- Falta de comunicación empática sobre los apoyos que requiere el estudiante para participar plenamente.',
+'- Desmotivación y aislamiento comunicativo.
+- Dificultad para expresar sus necesidades o pedir ayuda.
+- Pérdida de oportunidades de aprendizaje y participación.',
+'- Promover lenguaje inclusivo; espacios de diálogo sobre sus requerimientos; uso de canales claros y respetuosos de comunicación.',
+3),
+
+-- 4. Barrera Organizativa - Discapacidad Física
+(1, 'Organizativas',
+'- Falta de protocolos para la atención de emergencias o evacuación de estudiantes con movilidad reducida.
+- No se coordinan apoyos con personal auxiliar, terapéutico o de transporte.
+- Carencia de políticas institucionales de accesibilidad e inclusión.
+- Falta de sensibilización institucional sobre movilidad y autonomía.',
+'- Inseguridad y exclusión en eventos escolares o salidas pedagógicas.
+- Descoordinación entre los diferentes actores del proceso educativo.
+- Falta de continuidad y coherencia en los apoyos ofrecidos.',
+'- Implementar plan institucional de inclusión; capacitar personal; establecer apoyo logístico y de emergencia.',
+4),
+
+-- 5. Barrera Metodológica - Discapacidad Física
+(1, 'Metodológicas',
+'- El docente no adapta la metodología a las necesidades motrices del estudiante.
+- Se exige escritura manual extensa, recortes, o manipulaciones finas imposibles de realizar sin apoyo.
+- No se da tiempo adicional para desarrollar tareas.
+- No se ofrecen alternativas tecnológicas o adaptadas para responder o participar.',
+'- Dificultad para cumplir con las actividades escolares.
+- Frustración por no poder responder en los tiempos exigidos.
+- Bajo rendimiento académico no por falta de conocimiento, sino por barreras físicas.',
+'- Flexibilizar tiempos; permitir respuestas orales o digitales; usar tecnología asistida (dictado por voz, teclado adaptado).',
+5),
+
+-- 6. Barrera Pedagógica - Discapacidad Física
+(1, 'Pedagógicas',
+'- El docente no considera la diversidad motriz en la planificación de clases.
+- No se incluyen actividades alternativas para participación activa sin esfuerzo físico excesivo.
+- Las clases no promueven la autonomía ni la autoeficacia del estudiante.
+- Falta de trabajo colaborativo que fomente la inclusión del estudiante con discapacidad motora.',
+'- Participación limitada en experiencias de aprendizaje.
+- Dificultad para construir sentido de pertenencia y competencia.
+- Desvinculación del proceso educativo por falta de adecuación pedagógica.',
+'- Diseñar clases con metodologías flexibles (ABP, retos, aprendizaje colaborativo); promover la autonomía; ajustar actividades sin excluirlo.',
+6);
+
+-- =============================================
+-- 6. INSERTAR BARRERAS - DISCAPACIDAD AUDITIVA (ID: 2)
+-- =============================================
+
+-- 7. Barrera Actitudinal - Discapacidad Auditiva
+INSERT INTO barreras (id_categoria_simat, tipo_barrera, situacion_observable, impacto, ajustes_estrategias, orden) VALUES
+(2, 'Actitudinales', 
+'- Algunos docentes y compañeros asumen que el estudiante "no puede aprender" o "no entiende", lo que genera subvaloración de sus capacidades.
+- Se evidencia sobreprotección o, por el contrario, exclusión en actividades grupales.
+- No siempre se promueven actitudes de respeto, empatía ni colaboración hacia él.',
+'- Baja autoestima y desmotivación.
+- Pérdida de confianza en sí mismo y dependencia excesiva del adulto.
+- Disminución en la participación y socialización con el grupo.',
+'- Sensibilizar a docentes y grupo en inclusión; promover campañas de empatía; fomentar roles de colaboración y tutoría entre pares; reforzar logros con refuerzos positivos.',
+1);
+
+-- Barreras Arquitectónicas - Discapacidad Intelectual
+INSERT INTO barreras (id_categoria_simat, tipo_barrera, situacion_observable, impacto, ajustes_estrategias, orden) VALUES
+(1, 'Arquitectónicas',
+'- Aula con ruido, desorden visual o disposición del mobiliario que impide moverse libremente.
+- Falta de señalización o apoyos visuales en los espacios.
+- Ambientes poco estructurados para favorecer la atención.',
+'- Distracción constante, desregulación sensorial y desorientación.
+- Dificultad para mantener la atención y organización personal.
+- Pérdida de tiempo efectivo de aprendizaje.',
+'- Adecuar el aula con espacios tranquilos, mobiliario ergonómico y señalización visual; delimitar zonas de trabajo.',
+2);
+
+-- Barreras De Acceso A Información Y Comunicaciones - Discapacidad Intelectual
+INSERT INTO barreras (id_categoria_simat, tipo_barrera, situacion_observable, impacto, ajustes_estrategias, orden) VALUES
+(1, 'De Acceso A Información Y Comunicaciones',
+'- Se usa lenguaje abstracto o técnico, sin verificar la comprensión.
+- Las instrucciones son extensas y sin apoyo visual.
+- No se utilizan pictogramas, lenguaje sencillo ni mediaciones gráficas o gestuales.',
+'- El estudiante no entiende con claridad lo que debe hacer.
+- Limita su expresión oral y escrita.
+- Se reduce la interacción con docentes y compañeros.',
+'- Utilizar lenguaje claro y concreto; apoyos visuales, pictogramas y ejemplos; verificar comprensión mediante preguntas simples; emplear comunicación multimodal.',
+3);
+
+-- Barreras Organizativas - Discapacidad Intelectual
+INSERT INTO barreras (id_categoria_simat, tipo_barrera, situacion_observable, impacto, ajustes_estrategias, orden) VALUES
+(1, 'Organizativas',
+'- Un solo docente atiende simultáneamente a 40 estudiantes, entre ellos uno o más con discapacidad.
+- No se dispone de tiempo suficiente para aplicar estrategias individualizadas ni realizar seguimiento personalizado.
+- El docente debe dividir su atención, priorizando el control del grupo sobre el acompañamiento pedagógico.
+- Falta de políticas institucionales claras de inclusión.
+- Escasa articulación entre docentes, orientadores y profesionales de apoyo.
+- PIAR desactualizado o desconocido por parte del equipo docente.
+- No se planifican reuniones de seguimiento o acompañamiento.',
+'- Descoordinación en las estrategias pedagógicas.
+- Falta de coherencia en los apoyos ofrecidos.
+- Menor efectividad en los procesos de inclusión.
+- Recibe menor tiempo de interacción directa y orientación individual.
+- Se dificulta la aplicación de apoyos y ajustes razonables en clase.',
+'- Socializar y actualizar el PIAR con todo el equipo docente; realizar reuniones de seguimiento; incluir la inclusión en el PEI; coordinar apoyos pedagógicos.',
+4);
+
+-- Barreras Metodológicas - Discapacidad Intelectual
+INSERT INTO barreras (id_categoria_simat, tipo_barrera, situacion_observable, impacto, ajustes_estrategias, orden) VALUES
+(1, 'Metodológicas',
+'- Se aplican métodos uniformes centrados en la exposición oral, sin adaptación a los ritmos ni estilos de aprendizaje del estudiante.
+- Falta de uso de estrategias activas, experienciales y concretas.
+- No se incluyen apoyos visuales, juegos, experimentos o actividades manipulativas.',
+'- Dificultad para comprender y retener información.
+- Escasa participación y baja atención en clase.
+- Frustración ante tareas repetitivas o abstractas.',
+'- Implementar metodologías activas, lúdicas y por proyectos; usar apoyos concretos, pictogramas, material manipulativo y experiencias prácticas.',
+5);
+
+-- Barreras Pedagógicas - Discapacidad Intelectual
+INSERT INTO barreras (id_categoria_simat, tipo_barrera, situacion_observable, impacto, ajustes_estrategias, orden) VALUES
+(1, 'Pedagógicas',
+'- Las prácticas pedagógicas no contemplan la diversidad ni los ritmos individuales de aprendizaje.
+- No se diseñan experiencias significativas, contextualizadas ni funcionales para la vida diaria.
+- El docente no utiliza mediaciones pedagógicas variadas (juego, dramatización, proyectos, aprendizaje basado en retos).
+- No se promueve el aprendizaje cooperativo ni la tutoría entre pares.',
+'- El estudiante se mantiene pasivo frente al aprendizaje.
+- Baja comprensión y retención de conceptos.
+- Desvinculación afectiva y cognitiva del proceso educativo.
+- Dificultad para desarrollar habilidades adaptativas y funcionales.',
+'- Planificar actividades significativas y funcionales; aplicar aprendizaje cooperativo; promover autonomía mediante tareas prácticas y contextualizadas; incorporar juego, música y arte como mediadores.',
+6);
+
+'- Algunos docentes y compañeros asumen que el estudiante "no entiende" por su condición auditiva.
+- No se promueve el uso de la lengua de señas colombiana (LSC) en el aula.
+- Se percibe al intérprete como un obstáculo o "ayuda externa" en lugar de un mediador comunicativo.
+- Se presentan expresiones de lástima, sobreprotección o indiferencia frente a sus aportes.',
+'- Baja autoestima y desmotivación.
+- Aislamiento social dentro del grupo.
+- Dificultad para participar y construir vínculos comunicativos.
+- Desigualdad en la interacción y en la valoración académica.',
+'- Sensibilización sobre comunidad sorda, formación básica en LSC, promoción de actitudes inclusivas y trabajo cooperativo.',
+1),
+
+-- 8. Barrera Arquitectónica - Discapacidad Auditiva
+(2, 'Arquitectónicas',
+'- Algunos docentes y compañeros asumen que el estudiante "no entiende" por su condición auditiva.
+- No se promueve el uso de la lengua de señas colombiana (LSC) en el aula.
+- Se percibe al intérprete como un obstáculo o "ayuda externa" en lugar de un mediador comunicativo.
+- Se presentan expresiones de lástima, sobreprotección o indiferencia frente a sus aportes.',
+'- Baja autoestima y desmotivación.
+- Aislamiento social dentro del grupo.
+- Dificultad para participar y construir vínculos comunicativos.
+- Desigualdad en la interacción y en la valoración académica.',
+'- Sensibilización sobre comunidad sorda, formación básica en LSC, promoción de actitudes inclusivas y trabajo cooperativo.',
+1);
+
+'- La ubicación del estudiante en el aula no favorece la lectura labial o visualización del docente.
+- Mala iluminación o disposición inadecuada del mobiliario.
+- Ausencia de señalización visual o avisos luminosos ante emergencias.',
+'- Dificulta la lectura facial y la percepción de los gestos.
+- Riesgo ante situaciones de alerta.
+- Incomodidad visual y disminución de la atención.',
+'- Ubicación preferencial, buena iluminación, disposición circular del aula, señalización visual para emergencias.',
+2),
+
+-- 9. Barrera de Acceso a Información y Comunicaciones - Discapacidad Auditiva
+(2, 'De Acceso A Información Y Comunicaciones',
+'- Falta de dominio o desconocimiento de la Lengua de Señas Colombiana (LSC) por parte de docentes y compañeros.
+- No se utilizan apoyos visuales, subtítulos, esquemas o pictogramas.
+- Ausencia de intérprete o deficiente coordinación con él.
+- Se impide el acceso a la información auditiva (avisos, alarmas, comunicados orales, anuncios).',
+'- Exclusión del estudiante en actividades y conversaciones.
+- Dificultad para acceder a instrucciones, orientaciones y contenidos académicos.
+- Sensación de aislamiento o desconexión del entorno educativo.
+- Afectación en el desarrollo del lenguaje, la comprensión lectora y la escritura.',
+'- Garantizar intérprete de LSC, materiales con imágenes y textos, subtítulos en videos, avisos visuales y fomento del aprendizaje bilingüe (LSC–Español).',
+3);
+
+-- Barreras Organizativas - Discapacidad Auditiva
+INSERT INTO barreras (id_categoria_simat, tipo_barrera, situacion_observable, impacto, ajustes_estrategias, orden) VALUES
+(2, 'Organizativas',
+'- Falta de articulación entre docente de aula, docente de apoyo y el intérprete.
+- Ausencia de protocolos institucionales para garantizar accesibilidad comunicativa.
+- Desconocimiento institucional del enfoque bilingüe (LSC–Español).
+- Escasa capacitación docente en atención a la población sorda.',
+'- Descoordinación en las estrategias y apoyos aplicados.
+- Dificultad para garantizar continuidad y coherencia en el acompañamiento.
+- Limitación en la participación plena del estudiante en la vida escolar.',
+'- Crear protocolos para atención a estudiantes sordos, coordinar reuniones periódicas entre docentes y apoyos, registrar PIAR actualizado.',
+4);
+
+-- Barreras Metodológicas - Discapacidad Auditiva
+INSERT INTO barreras (id_categoria_simat, tipo_barrera, situacion_observable, impacto, ajustes_estrategias, orden) VALUES
+(2, 'Metodológicas',
+'- El docente no adapta la metodología para garantizar comprensión visual o lectoescrita.
+- Se dictan clases únicamente de manera oral, sin apoyos visuales ni material gráfico.
+- No se da tiempo adicional para lectura labial o interpretación.
+- Las explicaciones se dan de espaldas al grupo o mientras se escribe en el tablero.',
+'- El estudiante no logra captar la información completa ni seguir el hilo de la clase.
+- Se generan vacíos conceptuales y desmotivación.
+- Dificultad para mantener la atención sostenida al depender de la vista constantemente.',
+'- Implementar estrategias visuales (gráficos, esquemas, subtítulos), usar intérprete, repetir instrucciones por escrito y adaptar el ritmo de la clase.',
+5);
+
+-- Barreras Pedagógicas - Discapacidad Auditiva
+INSERT INTO barreras (id_categoria_simat, tipo_barrera, situacion_observable, impacto, ajustes_estrategias, orden) VALUES
+(2, 'Pedagógicas',
+'- El proceso de enseñanza-aprendizaje se basa en la oralidad sin considerar el canal visual.
+- El docente no adapta los materiales ni el ritmo de trabajo.
+- Falta de experiencias significativas y contextualizadas que potencien la comunicación visual.
+- Escaso uso de metodologías colaborativas y visuales (aprendizaje basado en proyectos, dramatizaciones, infografías, videos subtitulados).',
+'- Desconexión entre la enseñanza y la forma en que el estudiante accede al conocimiento.
+- Dificultad para consolidar aprendizajes duraderos.
+- Baja participación, aislamiento y desmotivación escolar.',
+'- Promover metodologías activas, aprendizaje visual, proyectos colaborativos, uso de la LSC, dramatizaciones y materiales adaptados.',
+6);
+
+-- =============================================
+-- 7. INSERTAR BARRERAS - DISCAPACIDAD VISUAL
+-- =============================================
+
+-- Barreras Actitudinales - Discapacidad Visual
+INSERT INTO barreras (id_categoria_simat, tipo_barrera, situacion_observable, impacto, ajustes_estrategias, orden) VALUES
+(3, 'Actitudinales',
+'- Algunos docentes o compañeros sobreprotegen al estudiante o evitan asignarle responsabilidades por temor a "hacerle daño".
+- Se subestiman sus capacidades académicas y de autonomía.
+- Se percibe la ceguera como una limitación insuperable.
+- Falta de sensibilización del grupo frente al uso del bastón blanco o materiales adaptados.',
+'- Dificultad para desarrollar independencia y autoestima.
+- Exclusión de actividades de grupo o tareas de liderazgo.
+- Menor participación social y académica.',
+'- Realizar campañas de sensibilización institucional; promover actitudes de respeto y confianza; asignar responsabilidades acordes a sus habilidades; fomentar la participación activa en el aula.',
+1);
+
+-- Barreras Arquitectónicas - Discapacidad Visual
+INSERT INTO barreras (id_categoria_simat, tipo_barrera, situacion_observable, impacto, ajustes_estrategias, orden) VALUES
+(3, 'Arquitectónicas',
+'- Los pasillos, escaleras o aulas carecen de señalización táctil o contrastes de color.
+- No existen guías podotáctiles ni barandas de apoyo.
+- El mobiliario se cambia constantemente de lugar sin aviso.
+- La iluminación es deficiente o genera reflejos.',
+'- Dificultad para desplazarse con seguridad.
+- Riesgo de caídas o accidentes.
+- Temor a moverse por el entorno escolar.
+- Dependencia de acompañamiento constante.',
+'- Implementar señalización en braille y contraste alto; mantener disposición estable del mobiliario; ubicar barandas y guías táctiles en pasillos.',
+2);
+
+-- Barreras De Acceso A Información Y Comunicaciones - Discapacidad Visual
+INSERT INTO barreras (id_categoria_simat, tipo_barrera, situacion_observable, impacto, ajustes_estrategias, orden) VALUES
+(3, 'De Acceso A Información Y Comunicaciones',
+'- La información institucional (carteles, comunicados, horarios) se presenta únicamente de forma escrita o visual.
+- No se facilita material en formatos accesibles (braille, texto digital, audio).
+- Los docentes no describen verbalmente lo que escriben o proyectan.
+- Falta de recursos para recibir retroalimentación mediante medios orales o digitales.',
+'- Limitado acceso a la información y a la comunicación institucional.
+- Dependencia de terceros para interpretar avisos o materiales.
+- Desigualdad en la participación y comprensión de las clases.',
+'- Entregar información en formatos accesibles (braille, audio, texto digital); leer en voz alta anuncios; garantizar el acceso mediante lectores de pantalla.',
+3);
+
+-- Barreras Organizativas - Discapacidad Visual
+INSERT INTO barreras (id_categoria_simat, tipo_barrera, situacion_observable, impacto, ajustes_estrategias, orden) VALUES
+(3, 'Organizativas',
+'- Ausencia de un plan institucional para la atención de estudiantes con discapacidad visual.
+- No se asignan apoyos pedagógicos ni tiflológicos.
+- Falta de coordinación entre docentes, orientador y familia.
+- Carencia de capacitación docente en tiflotecnología y braille.',
+'- Desarticulación entre estrategias y apoyos.
+- Inconsistencia en la atención educativa.
+- Escasa continuidad y coherencia en el acompañamiento pedagógico.',
+'- Crear protocolo institucional de atención a discapacidad visual; coordinar acciones con docentes de apoyo; actualizar el PIAR cada periodo.',
+4);
+
+-- Barreras Metodológicas - Discapacidad Visual
+INSERT INTO barreras (id_categoria_simat, tipo_barrera, situacion_observable, impacto, ajustes_estrategias, orden) VALUES
+(3, 'Metodológicas',
+'- Las estrategias de enseñanza se apoyan exclusivamente en material visual (tablero, presentaciones, gráficos).
+- No se ofrecen alternativas auditivas, táctiles o descriptivas.
+- No se dan tiempos adicionales para la lectura braille o el uso de tecnología de apoyo.
+- Se realizan actividades sin previa verbalización ni descripción del entorno.',
+'- Dificultad para comprender y seguir las explicaciones.
+- Lentitud en el acceso a la información.
+- Desventaja frente al ritmo del grupo.
+- Pérdida de interés o frustración.',
+'- Emplear verbalización de todo contenido visual; usar materiales táctiles, auditivos y descripciones orales; proporcionar tiempo adicional; priorizar experiencias multisensoriales.',
+5);
+
+-- Barreras Pedagógicas - Discapacidad Visual
+INSERT INTO barreras (id_categoria_simat, tipo_barrera, situacion_observable, impacto, ajustes_estrategias, orden) VALUES
+(3, 'Pedagógicas',
+'- El docente no diversifica las estrategias didácticas ni utiliza apoyos auditivos o táctiles.
+- No se promueven actividades de exploración sensorial, orientación espacial ni desarrollo de autonomía.
+- Las explicaciones se limitan a la exposición oral sin lenguaje descriptivo.
+- Falta de mediaciones activas (aprendizaje basado en proyectos, dramatización, modelado táctil).',
+'- Aprendizaje superficial o memorístico.
+- Limitada comprensión de conceptos visuales o espaciales.
+- Escasa motivación y dependencia permanente del docente.
+- Baja apropiación del conocimiento funcional.',
+'- Promover metodologías activas (ABP, dramatización, exploración sensorial); usar lenguaje descriptivo y material tangible; fomentar el aprendizaje autónomo.',
+6);
+
+-- =============================================
+-- CATEGORÍA: DISCAPACIDAD FÍSICA (ID: 4)
+-- =============================================
+
+-- 19. Barrera Actitudinal - Discapacidad Física
+(4, 'Actitudinales',
+'- Algunos docentes o compañeros asumen que el estudiante "no puede realizar ciertas actividades" por su condición motora.
+- Se promueven actitudes de sobreprotección o compasión, limitando su autonomía.
+- No se estimula la participación activa ni el liderazgo en el grupo.
+- Ausencia de campañas de sensibilización sobre la discapacidad motora.',
+'- Baja autoestima y dependencia de otros.
+- Aislamiento y exclusión del trabajo en grupo.
+- Falta de confianza en sus capacidades y menor participación en clase.',
+'- Sensibilizar al grupo; promover la autonomía y la participación activa; reconocer sus capacidades; implementar campañas de inclusión.',
+1),
+
+-- 20. Barrera Arquitectónica - Discapacidad Física
+(4, 'Arquitectónicas',
+'- Escaleras, rampas inadecuadas o pisos resbaladizos dificultan la movilidad.
+- No hay ascensores, pasamanos o puertas accesibles.
+- El aula no cuenta con espacio suficiente para desplazarse en silla de ruedas.
+- Los baños no están adaptados ni señalizados.',
+'- Riesgo de accidentes o caídas.
+- Dependencia constante de otras personas.
+- Dificultad para llegar puntualmente a las clases o moverse dentro de la institución.',
+'- Adecuar rampas, pasamanos, ascensores; ubicar al estudiante en espacio accesible y seguro.',
+2),
+
+-- 21. Barrera de Acceso a Información y Comunicaciones - Discapacidad Física
+(4, 'De Acceso A Información Y Comunicaciones',
+'- Las orientaciones se dan sin verificar si el estudiante logra ejecutar las acciones físicas requeridas.
+- Se utilizan términos inadecuados o expresiones peyorativas ("inválido", "minusválido").
+- Falta de comunicación empática sobre los apoyos que requiere el estudiante para participar plenamente.',
+'- Desmotivación y aislamiento comunicativo.
+- Dificultad para expresar sus necesidades o pedir ayuda.
+- Pérdida de oportunidades de aprendizaje y participación.',
+'- Promover lenguaje inclusivo; espacios de diálogo sobre sus requerimientos; uso de canales claros y respetuosos de comunicación.',
+3),
+
+-- 22. Barrera Organizativa - Discapacidad Física
+(4, 'Organizativas',
+'- Falta de protocolos para la atención de emergencias o evacuación de estudiantes con movilidad reducida.
+- No se coordinan apoyos con personal auxiliar, terapéutico o de transporte.
+- Carencia de políticas institucionales de accesibilidad e inclusión.
+- Falta de sensibilización institucional sobre movilidad y autonomía.',
+'- Inseguridad y exclusión en eventos escolares o salidas pedagógicas.
+- Descoordinación entre los diferentes actores del proceso educativo.
+- Falta de continuidad y coherencia en los apoyos ofrecidos.',
+'- Implementar plan institucional de inclusión; capacitar personal; establecer apoyo logístico y de emergencia.',
+4),
+
+-- 23. Barrera Metodológica - Discapacidad Física
+(4, 'Metodológicas',
+'- El docente no adapta la metodología a las necesidades motrices del estudiante.
+- Se exige escritura manual extensa, recortes, o manipulaciones finas imposibles de realizar sin apoyo.
+- No se da tiempo adicional para desarrollar tareas.
+- No se ofrecen alternativas tecnológicas o adaptadas para responder o participar.',
+'- Dificultad para cumplir con las actividades escolares.
+- Frustración por no poder responder en los tiempos exigidos.
+- Bajo rendimiento académico no por falta de conocimiento, sino por barreras físicas.',
+'- Flexibilizar tiempos; permitir respuestas orales o digitales; usar tecnología asistida (dictado por voz, teclado adaptado).',
+5),
+
+-- 24. Barrera Pedagógica - Discapacidad Física
+(4, 'Pedagógicas',
+'- El docente no considera la diversidad motriz en la planificación de clases.
+- No se incluyen actividades alternativas para participación activa sin esfuerzo físico excesivo.
+- Las clases no promueven la autonomía ni la autoeficacia del estudiante.
+- Falta de trabajo colaborativo que fomente la inclusión del estudiante con discapacidad motora.',
+'- Participación limitada en experiencias de aprendizaje.
+- Dificultad para construir sentido de pertenencia y competencia.
+- Desvinculación del proceso educativo por falta de adecuación pedagógica.',
+'- Diseñar clases con metodologías flexibles (ABP, retos, aprendizaje colaborativo); promover la autonomía; ajustar actividades sin excluirlo.',
+6);
+
+-- =============================================
+-- CATEGORÍA: DISCAPACIDAD PSICOSOCIAL (ID: 5)
+-- =============================================
+
+-- 25. Barrera Actitudinal - Discapacidad Psicosocial
+(5, 'Actitudinales',
+'- Se percibe al estudiante como "problemático", "perezoso" o "violento".
+- Algunos docentes y compañeros lo evitan o lo aíslan ante manifestaciones emocionales intensas.
+- Se desconoce que las conductas derivan de una condición psicosocial y no de falta de voluntad.
+- Escasa empatía y comprensión hacia los episodios de crisis o ansiedad.',
+'- Aislamiento social y estigmatización.
+- Disminución de la autoestima y la autopercepción de competencia.
+- Incremento de la ansiedad, frustración y reacciones defensivas.
+- Desmotivación hacia la escuela y riesgo de deserción.',
+'- Capacitar al personal docente en salud mental e inclusión. Fomentar el respeto, la empatía y el lenguaje positivo. Sensibilizar al grupo sobre la discapacidad psicosocial. Promover relaciones basadas en el apoyo y la confianza.',
+1),
+
+-- 26. Barrera Arquitectónica - Discapacidad Psicosocial
+(5, 'Arquitectónicas',
+'- Ambientes con exceso de ruido, iluminación fuerte o hacinamiento.
+- Falta de espacios tranquilos para autorregulación o atención individual.
+- Aulas cerradas sin ventilación o saturadas de estímulos visuales.',
+'- Sobrecarga sensorial y emocional.
+- Dificultad para concentrarse o mantener el autocontrol.
+- Incremento de episodios de ansiedad o irritabilidad.',
+'- Crear zonas de calma o espacios tranquilos. Controlar iluminación, ruido y temperatura. Organizar el aula para facilitar orden y seguridad emocional.',
+2),
+
+-- 27. Barrera de Acceso a Información y Comunicaciones - Discapacidad Psicosocial
+(5, 'De Acceso A Información Y Comunicaciones',
+'- Falta de comunicación empática y lenguaje no asertivo (tono autoritario, críticas constantes).
+- No se escuchan las necesidades emocionales del estudiante.
+- Escasa mediación en conflictos o malinterpretación de gestos y silencios.
+- Pocas oportunidades para expresar pensamientos, emociones o preocupaciones.',
+'- Ruptura del vínculo pedagógico.
+- Malentendidos y conflictos interpersonales.
+- Aumento de la ansiedad o retraimiento.
+- Disminución de la participación en clase y el trabajo colaborativo.',
+'- Emplear lenguaje asertivo y empático. Fomentar la escucha activa y el diálogo restaurativo. Establecer acuerdos de convivencia cooperativos. Brindar espacios de conversación individual.',
+3),
+
+-- 28. Barrera Organizativa - Discapacidad Psicosocial
+(5, 'Organizativas',
+'- No existen protocolos de atención a crisis emocionales o de comportamiento.
+- Falta de articulación entre docentes, psicorientador y familia.
+- Ausencia de planes de acompañamiento psicoeducativo y seguimiento individual.
+- La institución no promueve espacios de bienestar emocional o prevención del acoso.',
+'- Manejo inadecuado de situaciones de crisis.
+- Falta de coherencia y continuidad en el acompañamiento.
+- Desconfianza de la familia hacia la institución.',
+'- Diseñar protocolos de atención a crisis emocionales. Coordinar trabajo interdisciplinario (orientador, familia, docentes). Realizar seguimiento periódico al PIAR.',
+4),
+
+-- 29. Barrera Metodológica - Discapacidad Psicosocial
+(5, 'Metodológicas',
+'- Las estrategias pedagógicas no contemplan pausas activas, rutinas claras ni actividades de regulación emocional.
+- El docente aplica metodologías rígidas sin flexibilidad frente a cambios de estado anímico o atención.
+- No se usan apoyos visuales, guías paso a paso o agendas visuales.
+- Falta de adaptación de los tiempos o del ritmo de trabajo ante episodios de crisis.',
+'- Dificultad para mantener la atención y la concentración.
+- Incremento de la frustración o irritabilidad.
+- Pérdida de continuidad en el proceso de aprendizaje.
+- Riesgo de desbordamiento emocional o conductual.',
+'- Implementar rutinas flexibles y pausas activas. Utilizar agendas visuales, instrucciones claras y breves. Permitir tiempos adicionales o fragmentar actividades. Aplicar aprendizaje basado en proyectos con roles diversos.',
+5),
+
+-- 30. Barrera Pedagógica - Discapacidad Psicosocial
+(5, 'Pedagógicas',
+'- El docente no adapta las estrategias a los estados emocionales o de atención del estudiante.
+- No se promueven prácticas de aula basadas en el respeto, la empatía y la autorregulación.
+- Falta de proyectos que fortalezcan la convivencia y el bienestar emocional.
+- No se aplican metodologías participativas ni cooperativas que reduzcan la ansiedad.',
+'- Desvinculación del proceso de aprendizaje.
+- Dificultad para autorregularse y mantener la atención.
+- Rechazo a la escuela o al docente.
+- Baja disposición emocional para aprender.',
+'- Incorporar metodologías activas (aprendizaje cooperativo, proyectos, retos). Diseñar ambientes empáticos y seguros. Promover la autonomía, el refuerzo positivo y la flexibilidad pedagógica.',
+6);
+
+-- =============================================
+-- CATEGORÍA: DISCAPACIDAD MÚLTIPLE (ID: 6)
+-- =============================================
+
+-- 31. Barrera Actitudinal - Discapacidad Múltiple
+(6, 'Actitudinales',
+'- Algunos docentes o compañeros perciben al estudiante como "imposible de educar" o "demasiado dependiente".
+- Se refuerzan estereotipos de lástima o sobreprotección.
+- El grupo subestima sus capacidades cognitivas y sociales.
+- No se fomenta su autonomía por miedo a exponerlo a riesgos.',
+'- Exclusión social y baja participación en las actividades del aula.
+- Disminución de la autoestima y la iniciativa.
+- Falta de desarrollo de habilidades funcionales y sociales.
+- Dependencia excesiva del docente o acudiente.',
+'- Sensibilización institucional sobre discapacidad múltiple; promover la empatía, el respeto y el trabajo cooperativo; fomentar la autonomía y participación en tareas cotidianas; eliminar expresiones de lástima o paternalismo.',
+1),
+
+-- 32. Barrera Arquitectónica - Discapacidad Múltiple
+(6, 'Arquitectónicas',
+'- Falta de rampas, pasamanos, ascensores, señalización táctil o visual.
+- Espacios reducidos que impiden movilidad con silla de ruedas o ayudas técnicas.
+- Iluminación y acústica inadecuadas para estudiantes con limitaciones sensoriales.
+- Ubicación inadecuada del aula (lejos del baño adaptado, comedor o enfermería).',
+'- Dificultad para desplazarse con seguridad.
+- Riesgo de accidentes y dependencia física.
+- Restricción del acceso a actividades extracurriculares o recreativas.',
+'- Adaptar infraestructura: rampas seguras, pasamanos, aulas amplias, señalización en braille o alto relieve; garantizar accesibilidad a todos los espacios.',
+2),
+
+-- 33. Barrera de Acceso a Información y Comunicaciones - Discapacidad Múltiple
+(6, 'De Acceso A Información Y Comunicaciones',
+'- Falta de dominio por parte del docente de sistemas aumentativos o alternativos de comunicación (SAAC, pictogramas, lengua de señas, comunicación táctil).
+- Se imparten instrucciones sin verificar comprensión ni accesibilidad.
+- Escasa coordinación entre profesionales de apoyo (fonoaudiólogo, intérprete, tiflólogo, terapeuta ocupacional).
+- No se promueve la interacción con los compañeros mediante medios adaptados.',
+'- Dificultad para expresar necesidades, emociones e ideas.
+- Aislamiento y dependencia de un adulto mediador.
+- Baja participación social y académica.
+- Desmotivación y frustración comunicativa.',
+'- Implementar sistemas de comunicación aumentativa y alternativa; coordinar con fonoaudiólogo e intérprete; capacitar a docentes y pares en su uso; establecer rutinas comunicativas visuales o táctiles.',
+3),
+
+-- 34. Barrera Organizativa - Discapacidad Múltiple
+(6, 'Organizativas',
+'- Ausencia de un plan integral de inclusión con equipos interdisciplinarios.
+- Falta de articulación entre docentes, orientadores, terapeutas y familia.
+- No se socializan los apoyos o estrategias del PIAR con el cuerpo docente.
+- Falta de políticas de inclusión y accesibilidad institucional.',
+'- Descoordinación en las intervenciones pedagógicas.
+- Retraso en la implementación de apoyos y ajustes razonables.
+- Falta de coherencia institucional frente al proceso inclusivo.',
+'- Crear comité de inclusión institucional; coordinar docentes, profesionales de apoyo y familia; establecer seguimiento del PIAR; programar reuniones mensuales de evaluación.',
+4),
+
+-- 35. Barrera Metodológica - Discapacidad Múltiple
+(6, 'Metodológicas',
+'- Las estrategias de enseñanza no consideran la combinación de discapacidades (sensoriales, motoras, cognitivas).
+- Falta de apoyos multisensoriales (auditivos, táctiles, visuales) integrados.
+- No se planifican rutinas predecibles ni apoyos diferenciados por área.
+- Las actividades no se fragmentan ni se ajustan a ritmos individuales.',
+'- Dificultad para comprender consignas y acceder al contenido.
+- Ansiedad, frustración y desinterés por las clases.
+- Escasa retención de la información.
+- Pérdida de oportunidades de aprendizaje significativo.',
+'- Aplicar el Diseño Universal para el Aprendizaje (DUA); planificar experiencias multisensoriales (auditivas, táctiles, visuales); desglosar tareas en pasos concretos; usar apoyos visuales, auditivos y físicos combinados.',
+5),
+
+-- 36. Barrera Pedagógica - Discapacidad Múltiple
+(6, 'Pedagógicas',
+'- El docente no adapta su enseñanza a los múltiples canales sensoriales del estudiante.
+- No se promueven aprendizajes funcionales, cotidianos y significativos.
+- Falta de experiencias sensoriales integradas y trabajo colaborativo con especialistas.
+- Escaso uso de estrategias de modelado, exploración guiada y reforzamiento positivo.',
+'- Aprendizaje descontextualizado o no funcional.
+- Dificultad para transferir los aprendizajes a la vida diaria.
+- Dependencia permanente del docente o asistente.
+- Desmotivación y fatiga cognitiva.',
+'- Promover el aprendizaje funcional, activo y significativo; usar modelado, dramatización, exploración guiada y reforzamiento positivo; trabajar por proyectos sencillos y colaborativos.',
+6);
+
+-- =============================================
+-- MIGRACIÓN COMPLETADA
+-- Total de registros insertados:
+-- - 6 categorías SIMAT (Discapacidad Intelectual, Discapacidad Auditiva, Discapacidad Visual, Discapacidad Física, Discapacidad Psicosocial y Discapacidad Múltiple)
+-- - 36 barreras totales (6 por cada categoría)
+-- - Cada barrera incluye: situación_observable, impacto y ajustes_estrategias
+-- =============================================
+-- =============================================
+-- NUEVA CATEGORÍA SIMAT AGREGADA: AULAS HOSPITALARIAS
+-- Fecha: 9 de octubre de 2025
+-- =============================================
+-- CATEGORÍA ID: 8 - "Aulas Hospitalarias"
+-- Descripción: Estudiantes en condición de hospitalización que requieren 
+-- continuidad educativa y apoyo pedagógico especializado durante el tratamiento médico
+--
+-- SCRIPT DE INSERCIÓN: backend/database/insert_aulas_hospitalarias.sql
+-- (Incluye tanto la categoría como las 6 barreras específicas)
+--
+-- CARACTERÍSTICAS DE LA CATEGORÍA:
+-- - Estudiantes hospitalizados de larga estancia
+-- - Continuidad del proceso educativo durante tratamientos médicos
+-- - Apoyo pedagógico especializado en contexto hospitalario
+-- - Coordinación entre equipo médico y educativo
+-- - Flexibilización curricular según condición de salud
+--
+-- BARRERAS ESPECÍFICAS IMPLEMENTADAS (IDs: 43-48):
+-- 1. Actitudinales: Percepción como "paciente" vs "sujeto de derecho educativo"
+-- 2. Arquitectónicas: Espacios hospitalarios inadecuados para pedagogía
+-- 3. Comunicacionales: Desarticulación entre hospital, escuela y familia
+-- 4. Organizativas: Falta de protocolos y registro en SIMAT/PIAR
+-- 5. Metodológicas: Estrategias no adaptadas al contexto médico
+-- 6. Pedagógicas: Ausencia de pedagogía del cuidado y la esperanza
+--
+-- ENFOQUE INTEGRAL: Salud + Educación + Bienestar Emocional
+-- =============================================
+
 -- PARAMETRIZACIONES FUTURAS:
 -- Se implementarán gradualmente según las necesidades del proyecto:
 -- - Departamentos y municipios (ubicación geográfica)
@@ -1948,3 +2626,4 @@ INSERT INTO asignaturas (id_asignatura, nombre, descripcion, estado) VALUES
 -- 2. Ejecutar este script completo
 -- 3. Verificar que todas las extensiones estén habilitadas
 -- 4. Configurar usuarios y permisos según necesidades
+-- 5. Ejecutar script de Aulas Hospitalarias si se requiere: insert_aulas_hospitalarias.sql
