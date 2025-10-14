@@ -995,7 +995,8 @@ const FormularioPIAR = (function() {
             eps: [
                 { id: 1, nombre: 'EPS SURA' },
                 { id: 2, nombre: 'Nueva EPS' },
-                { id: 3, nombre: 'EPS Sanitas' }
+                { id: 3, nombre: 'EPS Sanitas' },
+                { id: 999, nombre: 'Otro' }
             ],
             instituciones: [
                 { id: 1, nombre: 'FOSCAL' },
@@ -1127,11 +1128,14 @@ const FormularioPIAR = (function() {
     function _loadDummyEpsData() {
         // Datos dummy de EPS para cuando falla la conexión
         const dummyEps = [
-            { id: 1, nombre: 'SURA' },
-            { id: 2, nombre: 'NUEVA EPS' },
-            { id: 3, nombre: 'SANITAS' },
+            { id: 1, nombre: 'ASMETSALUD' },
+            { id: 2, nombre: 'COOSALUD' },
+            { id: 3, nombre: 'COOMEVA' },
             { id: 4, nombre: 'FAMISANAR' },
-            { id: 5, nombre: 'COOMEVA' }
+            { id: 5, nombre: 'NUEVA EPS' },
+            { id: 6, nombre: 'SANITAS' },
+            { id: 7, nombre: 'SURA' },
+            { id: 999, nombre: 'Otro' } // ID consistente con la base de datos - siempre al final
         ];
         _populateSelectWithOther('eps', dummyEps);
     }
@@ -1251,6 +1255,12 @@ const FormularioPIAR = (function() {
             select.removeChild(select.lastChild);
         }
         
+        // Verificar si ya existe una opción "Otro" en los datos
+        const hasOtroInData = data.some(item => 
+            item.nombre.toLowerCase() === 'otro' || 
+            item.nombre.toLowerCase() === 'otros'
+        );
+        
         // Agregar opciones de datos
         data.forEach(item => {
             const option = document.createElement('option');
@@ -1259,11 +1269,13 @@ const FormularioPIAR = (function() {
             select.appendChild(option);
         });
         
-        // Agregar opción "Otro"
-        const otherOption = document.createElement('option');
-        otherOption.value = 'otro';
-        otherOption.textContent = 'Otro';
-        select.appendChild(otherOption);
+        // Solo agregar opción "Otro" si no existe en los datos de la base de datos
+        if (!hasOtroInData) {
+            const otherOption = document.createElement('option');
+            otherOption.value = 'otro';
+            otherOption.textContent = 'Otro';
+            select.appendChild(otherOption);
+        }
     }
     
     function _handleEpsChange() {
@@ -1272,7 +1284,8 @@ const FormularioPIAR = (function() {
         
         if (!epsSelect || !epsOtroGroup) return;
         
-        if (epsSelect.value === 'otro') {
+        // Verificar si se seleccionó "otro" (valor temporal) o "999" (ID de la base de datos)
+        if (epsSelect.value === 'otro' || epsSelect.value === '999') {
             epsOtroGroup.style.display = 'block';
             document.getElementById('epsOtro').required = true;
         } else {
@@ -1449,8 +1462,55 @@ const FormularioPIAR = (function() {
         
         // Validaciones específicas
         const email = document.getElementById('email');
-        if (email.value && !_isValidEmail(email.value)) {
+        if (email && email.value && !_isValidEmail(email.value)) {
             _showFieldError(email, 'Ingrese un correo electrónico válido');
+            isValid = false;
+        }
+
+        // Validaciones específicas del PIAR Anexo 1
+        
+        // Validar documento de identidad del estudiante
+        const tipoDocumento = document.getElementById('tipoDocumento');
+        const numeroDocumento = document.getElementById('numeroDocumento');
+        if (tipoDocumento && numeroDocumento) {
+            if (tipoDocumento.value && !numeroDocumento.value.trim()) {
+                _showFieldError(numeroDocumento, 'El número de documento es obligatorio');
+                isValid = false;
+            } else if (numeroDocumento.value.trim() && !tipoDocumento.value) {
+                _showFieldError(tipoDocumento, 'El tipo de documento es obligatorio');
+                isValid = false;
+            }
+        }
+
+        // Validar fecha de nacimiento (no debe ser futura)
+        const fechaNacimiento = document.getElementById('fechaNacimiento');
+        if (fechaNacimiento && fechaNacimiento.value) {
+            const fechaNac = new Date(fechaNacimiento.value);
+            const hoy = new Date();
+            if (fechaNac > hoy) {
+                _showFieldError(fechaNacimiento, 'La fecha de nacimiento no puede ser futura');
+                isValid = false;
+            }
+            // Validar que no sea demasiado antigua (más de 100 años)
+            const hace100Anos = new Date();
+            hace100Anos.setFullYear(hace100Anos.getFullYear() - 100);
+            if (fechaNac < hace100Anos) {
+                _showFieldError(fechaNacimiento, 'La fecha de nacimiento no puede ser anterior a 100 años');
+                isValid = false;
+            }
+        }
+
+        // Validar categoría SIMAT (requerida para el sistema)
+        const categoriaSimat = document.getElementById('categoriaSimat');
+        if (categoriaSimat && !categoriaSimat.value) {
+            _showFieldError(categoriaSimat, 'La categoría SIMAT es obligatoria');
+            isValid = false;
+        }
+
+        // Validar institución educativa
+        const institucionEducativa = document.getElementById('institucionEducativa');
+        if (institucionEducativa && !institucionEducativa.value.trim()) {
+            _showFieldError(institucionEducativa, 'La institución educativa es obligatoria');
             isValid = false;
         }
         
@@ -1483,17 +1543,155 @@ const FormularioPIAR = (function() {
         }
     }
     
+    // Función para mostrar notificaciones del PIAR
+    function _showNotificationPiar(type, title, message) {
+        const notificacion = document.createElement('div');
+        notificacion.className = `notification-barriers ${type}`;
+        
+        const icon = type === 'success' ? '✅' : type === 'error' ? '⚠️' : 'ℹ️';
+        
+        notificacion.innerHTML = `
+            <div class="notification-content">
+                <i class="notification-icon">${icon}</i>
+                <div class="notification-text">
+                    <strong>${title}</strong><br>
+                    <small>${message}</small>
+                </div>
+                <button class="notification-close">×</button>
+            </div>
+        `;
+        
+        document.body.appendChild(notificacion);
+        
+        // Auto-cerrar después de 8 segundos para éxito, 10 segundos para error
+        const autoCloseTime = type === 'error' ? 10000 : 8000;
+        setTimeout(() => {
+            if (notificacion.parentNode) {
+                notificacion.remove();
+            }
+        }, autoCloseTime);
+        
+        // Evento para cerrar manualmente
+        notificacion.querySelector('.notification-close').addEventListener('click', () => {
+            notificacion.remove();
+        });
+    }
+
+    // Función placeholder - sin guardado en base de datos
+    async function _saveFormularioPiarAnexo1(data) {
+        // Simulamos una respuesta exitosa sin guardar realmente
+        console.log('Datos del formulario (sin guardar):', data);
+        
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve({ 
+                    success: true, 
+                    message: 'Formulario procesado (sin guardado en base de datos)' 
+                });
+            }, 500);
+        });
+    }
+
     function _handleFormSubmit(e) {
         e.preventDefault();
         
         if (_validateForm()) {
-            const formData = new FormData(studentForm);
-            const data = Object.fromEntries(formData.entries());
+            // Mostrar mensaje de guardado
+            const saveButton = document.querySelector('.btn-primary[type="submit"]');
+            const originalText = saveButton.innerHTML;
+            saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+            saveButton.disabled = true;
             
-            console.log('Datos del formulario:', data);
-            
-            // Aquí iría la llamada a la API para guardar los datos
-            alert('Formulario guardado exitosamente (simulado)');
+            try {
+                // Recolectar datos base del formulario
+                const formData = new FormData(studentForm);
+                const data = Object.fromEntries(formData.entries());
+                
+                // Recolectar composición familiar dinámica
+                const composicionFamiliar = [];
+                for (let i = 1; i <= compositionCounter; i++) {
+                    const conQuienVive = document.getElementById(`conQuienVive${i}`);
+                    const nombrePersona = document.getElementById(`nombrePersona${i}`);
+                    const relacionEstudiante = document.getElementById(`relacionEstudiante${i}`);
+                    
+                    if (conQuienVive && conQuienVive.value) {
+                        const persona = {
+                            con_quien_vive: conQuienVive.value,
+                            nombre_persona: nombrePersona ? nombrePersona.value : '',
+                            relacion_estudiante: relacionEstudiante ? relacionEstudiante.value : ''
+                        };
+                        
+                        // Agregar campos "otro" si están presentes y visibles
+                        const otroConQuienVive = document.getElementById(`otroConQuienVive${i}`);
+                        const otroRelacionEstudiante = document.getElementById(`otroRelacionEstudiante${i}`);
+                        
+                        if (otroConQuienVive && otroConQuienVive.offsetParent !== null) {
+                            persona.otro_con_quien_vive = otroConQuienVive.value || '';
+                        }
+                        if (otroRelacionEstudiante && otroRelacionEstudiante.offsetParent !== null) {
+                            persona.otro_relacion_estudiante = otroRelacionEstudiante.value || '';
+                        }
+                        
+                        composicionFamiliar.push(persona);
+                    }
+                }
+                
+                // Recolectar figuras de apoyo dinámicas
+                const figurasApoyo = [];
+                for (let i = 1; i <= supportCounter; i++) {
+                    const nombreApoyo = document.getElementById(`nombreApoyo${i}`);
+                    const relacionApoyo = document.getElementById(`relacionApoyo${i}`);
+                    const generoApoyo = document.getElementById(`generoApoyo${i}`);
+                    const edadApoyo = document.getElementById(`edadApoyo${i}`);
+                    
+                    if (nombreApoyo && nombreApoyo.value) {
+                        const figura = {
+                            nombre_figura: nombreApoyo.value,
+                            relacion_figura: relacionApoyo ? relacionApoyo.value : '',
+                            genero_figura: generoApoyo ? generoApoyo.value : '',
+                            edad_figura: edadApoyo ? edadApoyo.value : ''
+                        };
+                        
+                        // Agregar campo "otro" si está presente y visible
+                        const otroRelacionApoyo = document.getElementById(`otroRelacionApoyo${i}`);
+                        if (otroRelacionApoyo && otroRelacionApoyo.offsetParent !== null) {
+                            figura.otro_relacion_figura = otroRelacionApoyo.value || '';
+                        }
+                        
+                        figurasApoyo.push(figura);
+                    }
+                }
+                
+                // Agregar arrays dinámicos al objeto de datos
+                data.composicionFamiliar = composicionFamiliar;
+                data.figurasApoyo = figurasApoyo;
+                
+                console.log('Datos del formulario a enviar:', data);
+                
+                // Procesar datos sin guardar en base de datos
+                _saveFormularioPiarAnexo1(data).then((result) => {
+                    // Éxito - Mostrar notificación
+                    _showNotificationPiar('success', 'Datos procesados correctamente', 'El formulario ha sido procesado. Nota: Los datos no se guardan en base de datos.');
+                    
+                    // Opcional: Limpiar formulario después de procesar
+                    // _clearForm();
+                }).catch((error) => {
+                    console.error('Error al procesar:', error);
+                    _showNotificationPiar('error', 'Error al procesar', error.message || 'Ha ocurrido un error inesperado al procesar el formulario.');
+                }).finally(() => {
+                    // Restaurar botón
+                    saveButton.innerHTML = originalText;
+                    saveButton.disabled = false;
+                });
+                
+            } catch (error) {
+                console.error('Error al procesar datos:', error);
+                alert('Error al procesar los datos del formulario');
+                
+                // Restaurar botón
+                saveButton.innerHTML = originalText;
+                saveButton.disabled = false;
+            }
         }
     }
     
@@ -2256,19 +2454,240 @@ const FormularioPIAR = (function() {
         }
     }
     
+    // Contador para materias del Anexo 3
+    let materiaCounter = 1;
+    const maxMaterias = 10; // Límite de materias que se pueden agregar
+
+    // Opciones de asignaturas por nivel educativo
+    const asignaturasOptions = {
+        preescolar: [
+            'Dimensión comunicativa',
+            'Dimensión cognitiva', 
+            'Dimensión corporal',
+            'Dimensión socioafectiva',
+            'Dimensión espiritual',
+            'Dimensión ética',
+            'Dimensión estética'
+        ],
+        basica: [
+            'Lengua Castellana',
+            'Inglés',
+            'Matemáticas',
+            'Biología',
+            'Física',
+            'Química',
+            'Ciencias Sociales',
+            'Ética',
+            'Artística',
+            'Educación Física',
+            'Religión',
+            'Tecnología e Informática'
+        ],
+        media: [
+            'Lengua Castellana',
+            'Inglés',
+            'Matemáticas',
+            'Biología',
+            'Física',
+            'Química',
+            'Ciencias Sociales',
+            'Ética',
+            'Artística',
+            'Educación Física',
+            'Religión',
+            'Tecnología e Informática'
+        ]
+    };
+
+    // Función para manejar el cambio de nivel educativo
+    function _handleNivelEducativoChange(event) {
+        const selectElement = event.target;
+        const groupId = selectElement.dataset.group;
+        const selectedValue = selectElement.value;
+        
+        const asignaturaRow = document.getElementById(`asignaturaRow${groupId}`);
+        const asignaturaSelect = document.getElementById(`asignatura${groupId}`);
+        const camposAdicionales = document.getElementById(`camposAdicionales${groupId}`);
+        
+        if (selectedValue && asignaturasOptions[selectedValue]) {
+            // Mostrar el select de asignaturas
+            asignaturaRow.style.display = 'block';
+            
+            // Limpiar y llenar opciones de asignatura
+            asignaturaSelect.innerHTML = '<option value="">Seleccione una asignatura</option>';
+            
+            asignaturasOptions[selectedValue].forEach(asignatura => {
+                const option = document.createElement('option');
+                option.value = asignatura.toLowerCase().replace(/\s+/g, '_');
+                option.textContent = asignatura;
+                asignaturaSelect.appendChild(option);
+            });
+            
+            // Ocultar campos adicionales hasta que se seleccione una asignatura
+            camposAdicionales.style.display = 'none';
+        } else {
+            // Ocultar todo si no hay selección
+            asignaturaRow.style.display = 'none';
+            camposAdicionales.style.display = 'none';
+        }
+    }
+
+    // Función para manejar el cambio de asignatura específica
+    function _handleAsignaturaChange(event) {
+        const selectElement = event.target;
+        const groupId = selectElement.dataset.group;
+        const selectedValue = selectElement.value;
+        
+        const camposAdicionales = document.getElementById(`camposAdicionales${groupId}`);
+        
+        if (selectedValue) {
+            // Mostrar los campos adicionales
+            camposAdicionales.style.display = 'block';
+        } else {
+            // Ocultar los campos adicionales
+            camposAdicionales.style.display = 'none';
+        }
+    }
+
+    // Función para agregar una nueva materia
+    function _addNewMateria() {
+        if (materiaCounter >= maxMaterias) {
+            _showNotification('Has alcanzado el límite máximo de materias.', 'warning');
+            return;
+        }
+
+        materiaCounter++;
+        const materiasContainer = document.getElementById('materiasContainer');
+        
+        const newMateriaHTML = `
+            <div class="materia-group" id="materiaGroup${materiaCounter}">
+                <!-- Selección de nivel educativo -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nivelEducativo${materiaCounter}">Seleccione las asignaturas que cursará durante cada periodo académico:</label>
+                        <select id="nivelEducativo${materiaCounter}" name="nivelEducativo${materiaCounter}" class="form-control nivel-educativo" data-group="${materiaCounter}" required>
+                            <option value="">Seleccione una opción</option>
+                            <option value="preescolar">Preescolar</option>
+                            <option value="basica">Educación básica</option>
+                            <option value="media">Educación media</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn-remove-materia" onclick="FormularioPIAR._removeMateria(${materiaCounter})">
+                            <i class="fas fa-times"></i>
+                            Eliminar materia
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Selección de asignatura específica (inicialmente oculto) -->
+                <div class="form-row" id="asignaturaRow${materiaCounter}" style="display: none;">
+                    <div class="form-group">
+                        <label for="asignatura${materiaCounter}">Seleccione la asignatura específica:</label>
+                        <select id="asignatura${materiaCounter}" name="asignatura${materiaCounter}" class="form-control asignatura-especifica" data-group="${materiaCounter}">
+                            <option value="">Seleccione una asignatura</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Campos adicionales (inicialmente ocultos) -->
+                <div class="campos-adicionales" id="camposAdicionales${materiaCounter}" style="display: none;">
+                    <!-- Derechos Básicos de Aprendizaje (DBA) -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="dba${materiaCounter}">Derechos Básicos de Aprendizaje (DBA):</label>
+                            <div class="textarea-container">
+                                <i class="fas fa-graduation-cap textarea-icon"></i>
+                                <textarea id="dba${materiaCounter}" name="dba${materiaCounter}" class="form-control professional-textarea" rows="3" placeholder="Haz clic para establecer los Derechos Básicos de Aprendizaje fundamentales y específicos para esta asignatura..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ajustes Particulares -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="ajustesParticulares${materiaCounter}">Ajustes Particulares:</label>
+                            <div class="textarea-container">
+                                <i class="fas fa-tools textarea-icon"></i>
+                                <textarea id="ajustesParticulares${materiaCounter}" name="ajustesParticulares${materiaCounter}" class="form-control professional-textarea" rows="3" placeholder="Haz clic para definir ajustes específicos y personalizados que faciliten el aprendizaje del estudiante..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Evaluación de los ajustes -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="evaluacionAjustes${materiaCounter}">Evaluación de los ajustes:</label>
+                            <div class="textarea-container">
+                                <i class="fas fa-chart-line textarea-icon"></i>
+                                <textarea id="evaluacionAjustes${materiaCounter}" name="evaluacionAjustes${materiaCounter}" class="form-control professional-textarea" rows="3" placeholder="Haz clic para establecer criterios y métodos de evaluación específicos para medir la efectividad de los ajustes implementados..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Separador entre materias -->
+                <hr class="materia-separator">
+            </div>
+        `;
+        
+        materiasContainer.insertAdjacentHTML('beforeend', newMateriaHTML);
+        
+        // Agregar event listeners para el nuevo grupo
+        const nuevoNivelSelect = document.getElementById(`nivelEducativo${materiaCounter}`);
+        const nuevaAsignaturaSelect = document.getElementById(`asignatura${materiaCounter}`);
+        
+        nuevoNivelSelect.addEventListener('change', _handleNivelEducativoChange);
+        nuevaAsignaturaSelect.addEventListener('change', _handleAsignaturaChange);
+        
+        _showNotification('Nueva materia agregada correctamente.', 'success');
+    }
+
+    // Función para eliminar una materia
+    function _removeMateria(groupId) {
+        const materiaGroup = document.getElementById(`materiaGroup${groupId}`);
+        if (materiaGroup) {
+            materiaGroup.remove();
+            _showNotification('Materia eliminada correctamente.', 'success');
+        }
+    }
+
+    // Función para inicializar los event listeners del Anexo 3
+    function _initAnexo3EventListeners() {
+        // Event listener para el botón de agregar materia
+        const addMateriaBtn = document.getElementById('addMateriaBtn');
+        if (addMateriaBtn) {
+            addMateriaBtn.addEventListener('click', _addNewMateria);
+        }
+
+        // Event listeners para la primera materia (ya existe en el HTML)
+        const nivelEducativo1 = document.getElementById('nivelEducativo1');
+        const asignatura1 = document.getElementById('asignatura1');
+        
+        if (nivelEducativo1) {
+            nivelEducativo1.addEventListener('change', _handleNivelEducativoChange);
+        }
+        
+        if (asignatura1) {
+            asignatura1.addEventListener('change', _handleAsignaturaChange);
+        }
+    }
+
     // Método público para inicializar
     function init() {
         _loadUserData();
         _setCurrentDate();
         _loadSelectData();
         _initEventListeners();
+        _initAnexo3EventListeners();
         
         console.log('Formulario PIAR inicializado');
     }
     
     // API pública
     return {
-        init: init
+        init: init,
+        _removeMateria: _removeMateria
     };
 })();
 
@@ -2280,7 +2699,9 @@ function limpiarAnexo2() {
     const anexo2Form = document.getElementById('anexo2Form');
     if (anexo2Form) {
         anexo2Form.reset();
-        console.log('Formulario Anexo 2 limpiado');
+        // También limpiar las firmas
+        clearAllSignatures();
+        console.log('Formulario Anexo 2 limpiado (incluyendo firmas)');
     }
 }
 
@@ -2294,11 +2715,46 @@ function guardarAnexo2() {
             data[key] = value;
         }
         
-        console.log('Datos del Anexo 2 a guardar:', data);
+        // Recopilar datos de firmas
+        const firmas = {
+            participantes: [],
+            docentes: []
+        };
+        
+        // Recopilar participantes generales
+        for (let i = 1; i <= generalSignatureCounter; i++) {
+            const nombreInput = document.getElementById(`nombreParticipante${i}`);
+            const cargoInput = document.getElementById(`cargoParticipante${i}`);
+            
+            if (nombreInput && cargoInput && nombreInput.value.trim()) {
+                firmas.participantes.push({
+                    nombre: nombreInput.value.trim(),
+                    cargo: cargoInput.value.trim()
+                });
+            }
+        }
+        
+        // Recopilar docentes
+        for (let i = 1; i <= teacherSignatureCounter; i++) {
+            const nombreInput = document.getElementById(`nombreDocente${i}`);
+            const asignaturaInput = document.getElementById(`asignaturaDocente${i}`);
+            
+            if (nombreInput && asignaturaInput && nombreInput.value.trim()) {
+                firmas.docentes.push({
+                    nombre: nombreInput.value.trim(),
+                    asignatura: asignaturaInput.value.trim()
+                });
+            }
+        }
+        
+        // Agregar firmas a los datos
+        data.firmas = firmas;
+        
+        console.log('Datos del Anexo 2 a guardar (incluyendo firmas):', data);
         
         // Aquí se puede implementar la lógica para enviar los datos al servidor
         // Por ahora solo mostramos un mensaje de confirmación
-        alert('Anexo 2 guardado exitosamente');
+        alert('Anexo 2 guardado exitosamente (incluyendo firmas)');
     }
 }
 
@@ -4470,3 +4926,139 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 1000);
 });
+
+// =============================================
+// FUNCIONES PARA MANEJO DE FIRMAS
+// =============================================
+
+let generalSignatureCounter = 1;
+let teacherSignatureCounter = 1;
+
+// Función para agregar participante general
+function addGeneralSignature() {
+    generalSignatureCounter++;
+    const container = document.getElementById('generalSignaturesContainer');
+    
+    const signatureRow = document.createElement('div');
+    signatureRow.className = 'signature-row';
+    signatureRow.id = `generalSignature${generalSignatureCounter}`;
+    
+    signatureRow.innerHTML = `
+        <div class="form-row">
+            <div class="form-group">
+                <label for="nombreParticipante${generalSignatureCounter}">Nombre:</label>
+                <input type="text" id="nombreParticipante${generalSignatureCounter}" 
+                       name="nombreParticipante${generalSignatureCounter}" 
+                       class="form-control" placeholder="Ingrese el nombre completo">
+            </div>
+            <div class="form-group">
+                <label for="cargoParticipante${generalSignatureCounter}">Cargo:</label>
+                <input type="text" id="cargoParticipante${generalSignatureCounter}" 
+                       name="cargoParticipante${generalSignatureCounter}" 
+                       class="form-control" placeholder="Ingrese el cargo">
+            </div>
+        </div>
+        <button type="button" class="btn-remove-signature" onclick="removeGeneralSignature(${generalSignatureCounter})">
+            <i class="fas fa-trash"></i> Eliminar
+        </button>
+    `;
+    
+    container.appendChild(signatureRow);
+}
+
+// Función para eliminar participante general
+function removeGeneralSignature(id) {
+    const signatureRow = document.getElementById(`generalSignature${id}`);
+    if (signatureRow && generalSignatureCounter > 1) {
+        signatureRow.remove();
+    }
+}
+
+// Función para agregar docente
+function addTeacherSignature() {
+    teacherSignatureCounter++;
+    const container = document.getElementById('teacherSignaturesContainer');
+    
+    const signatureRow = document.createElement('div');
+    signatureRow.className = 'teacher-signature-row';
+    signatureRow.id = `teacherSignature${teacherSignatureCounter}`;
+    
+    signatureRow.innerHTML = `
+        <div class="form-row">
+            <div class="form-group">
+                <label for="nombreDocente${teacherSignatureCounter}">Nombre:</label>
+                <input type="text" id="nombreDocente${teacherSignatureCounter}" 
+                       name="nombreDocente${teacherSignatureCounter}" 
+                       class="form-control" placeholder="Ingrese el nombre del docente">
+            </div>
+            <div class="form-group">
+                <label for="asignaturaDocente${teacherSignatureCounter}">Asignatura:</label>
+                <input type="text" id="asignaturaDocente${teacherSignatureCounter}" 
+                       name="asignaturaDocente${teacherSignatureCounter}" 
+                       class="form-control" placeholder="Ingrese la asignatura">
+            </div>
+        </div>
+        <button type="button" class="btn-remove-signature" onclick="removeTeacherSignature(${teacherSignatureCounter})">
+            <i class="fas fa-trash"></i> Eliminar
+        </button>
+    `;
+    
+    container.appendChild(signatureRow);
+}
+
+// Función para eliminar docente
+function removeTeacherSignature(id) {
+    const signatureRow = document.getElementById(`teacherSignature${id}`);
+    if (signatureRow && teacherSignatureCounter > 1) {
+        signatureRow.remove();
+    }
+}
+
+// Función para limpiar todas las firmas (usar en limpiarAnexo2)
+function clearAllSignatures() {
+    // Limpiar participantes generales
+    const generalContainer = document.getElementById('generalSignaturesContainer');
+    if (generalContainer) {
+        generalContainer.innerHTML = `
+            <div class="signature-row" id="generalSignature1">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombreParticipante1">Nombre:</label>
+                        <input type="text" id="nombreParticipante1" name="nombreParticipante1" 
+                               class="form-control" placeholder="Ingrese el nombre completo">
+                    </div>
+                    <div class="form-group">
+                        <label for="cargoParticipante1">Cargo:</label>
+                        <input type="text" id="cargoParticipante1" name="cargoParticipante1" 
+                               class="form-control" placeholder="Ingrese el cargo">
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Limpiar docentes
+    const teacherContainer = document.getElementById('teacherSignaturesContainer');
+    if (teacherContainer) {
+        teacherContainer.innerHTML = `
+            <div class="teacher-signature-row" id="teacherSignature1">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombreDocente1">Nombre:</label>
+                        <input type="text" id="nombreDocente1" name="nombreDocente1" 
+                               class="form-control" placeholder="Ingrese el nombre del docente">
+                    </div>
+                    <div class="form-group">
+                        <label for="asignaturaDocente1">Asignatura:</label>
+                        <input type="text" id="asignaturaDocente1" name="asignaturaDocente1" 
+                               class="form-control" placeholder="Ingrese la asignatura">
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Resetear contadores
+    generalSignatureCounter = 1;
+    teacherSignatureCounter = 1;
+}

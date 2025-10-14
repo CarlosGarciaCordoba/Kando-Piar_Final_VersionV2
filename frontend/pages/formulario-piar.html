@@ -4500,7 +4500,7 @@
                                 </button>
                                 <button type="submit" class="btn-primary">
                                     <i class="fas fa-save"></i>
-                                    Guardar Información
+                                    Procesar Información
                                 </button>
                             </div>
                         </form>
@@ -5923,6 +5923,69 @@
                                     </div>
                                 </div>
 
+                                <!-- Sección de Firmas -->
+                                <div class="section-divider" style="margin-top: 40px;">
+                                    <h2>FIRMAS DE QUIENES CONSTRUYEN EL DOCUMENTO</h2>
+                                </div>
+
+                                <div class="signatures-section">
+                                    <!-- Firmas Generales -->
+                                    <div class="subsection">
+                                        <h3>Participantes</h3>
+                                        <div id="generalSignaturesContainer">
+                                            <div class="signature-row" id="generalSignature1">
+                                                <div class="form-row">
+                                                    <div class="form-group">
+                                                        <label for="nombreParticipante1">Nombre:</label>
+                                                        <input type="text" id="nombreParticipante1" name="nombreParticipante1" 
+                                                               class="form-control" placeholder="Ingrese el nombre completo">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="cargoParticipante1">Cargo:</label>
+                                                        <input type="text" id="cargoParticipante1" name="cargoParticipante1" 
+                                                               class="form-control" placeholder="Ingrese el cargo">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Botón para agregar más participantes -->
+                                        <div class="form-row" style="margin-top: 15px;">
+                                            <button type="button" class="btn-add-signature" onclick="addGeneralSignature()">
+                                                <i class="fas fa-plus"></i> Agregar más información para la firma de participantes
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Firmas Docentes -->
+                                    <div class="subsection" style="margin-top: 30px;">
+                                        <h3>Firmas Docentes Comisión de Grado</h3>
+                                        <div id="teacherSignaturesContainer">
+                                            <div class="teacher-signature-row" id="teacherSignature1">
+                                                <div class="form-row">
+                                                    <div class="form-group">
+                                                        <label for="nombreDocente1">Nombre:</label>
+                                                        <input type="text" id="nombreDocente1" name="nombreDocente1" 
+                                                               class="form-control" placeholder="Ingrese el nombre del docente">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="asignaturaDocente1">Asignatura:</label>
+                                                        <input type="text" id="asignaturaDocente1" name="asignaturaDocente1" 
+                                                               class="form-control" placeholder="Ingrese la asignatura">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Botón para agregar más docentes -->
+                                        <div class="form-row" style="margin-top: 15px;">
+                                            <button type="button" class="btn-add-signature" onclick="addTeacherSignature()">
+                                                <i class="fas fa-plus"></i> Agregar más información para la firma de docentes
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <!-- Botones de acción para Anexo 2 -->
                                 <div class="form-actions">
                                     <button type="button" class="btn-secondary" onclick="limpiarAnexo2()">
@@ -5934,6 +5997,130 @@
                                 </div>
                             </form>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Anexo 3 -->
+            <div class="form-section">
+                <div class="section-header" data-section="anexo3">
+                    <h2>
+                        <i class="fas fa-file-alt"></i>
+                        Anexo 3
+                        <i class="fas fa-chevron-down toggle-icon"></i>
+                    </h2>
+                </div>
+                
+                <div class="section-content" id="anexo3Content">
+                    <!-- Título Principal del Anexo 3 -->
+                    <div class="main-title-section">
+                        <h1>Plan Individual de Ajustes Razonables (PIAR)</h1>
+                    </div>
+                    
+                    <div class="section-divider">
+                        <h2>Periodos académicos</h2>
+                    </div>
+
+                    <!-- Formulario del Anexo 3 -->
+                    <div class="subsection">
+                        <form id="anexo3Form" class="student-form">
+                            <!-- Selección de periodos académicos -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="periodosAcademicos">Seleccione los periodos académicos que trabaja el estudiante:</label>
+                                    <select id="periodosAcademicos" name="periodosAcademicos" class="form-control" required>
+                                        <option value="">Seleccione una opción</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Sección de Áreas -->
+                            <div class="section-divider">
+                                <h2>Áreas</h2>
+                            </div>
+
+                            <!-- Contenedor para materias -->
+                            <div id="materiasContainer">
+                                <!-- Primera materia -->
+                                <div class="materia-group" id="materiaGroup1">
+                                    <!-- Selección de nivel educativo -->
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="nivelEducativo1">Seleccione las asignaturas que cursará durante cada periodo académico:</label>
+                                            <select id="nivelEducativo1" name="nivelEducativo1" class="form-control nivel-educativo" data-group="1" required>
+                                                <option value="">Seleccione una opción</option>
+                                                <option value="preescolar">Preescolar</option>
+                                                <option value="basica">Educación básica</option>
+                                                <option value="media">Educación media</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Selección de asignatura específica (inicialmente oculto) -->
+                                    <div class="form-row" id="asignaturaRow1" style="display: none;">
+                                        <div class="form-group">
+                                            <label for="asignatura1">Seleccione la asignatura específica:</label>
+                                            <select id="asignatura1" name="asignatura1" class="form-control asignatura-especifica" data-group="1">
+                                                <option value="">Seleccione una asignatura</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Campos adicionales (inicialmente ocultos) -->
+                                    <div class="campos-adicionales" id="camposAdicionales1" style="display: none;">
+                                        <!-- Derechos Básicos de Aprendizaje (DBA) -->
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="dba1">Derechos Básicos de Aprendizaje (DBA):</label>
+                                                <div class="textarea-container">
+                                                    <i class="fas fa-graduation-cap textarea-icon"></i>
+                                                    <textarea id="dba1" name="dba1" class="form-control professional-textarea" rows="3" placeholder="Haz clic para establecer los Derechos Básicos de Aprendizaje fundamentales y específicos para esta asignatura..."></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Ajustes Particulares -->
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="ajustesParticulares1">Ajustes Particulares:</label>
+                                                <div class="textarea-container">
+                                                    <i class="fas fa-tools textarea-icon"></i>
+                                                    <textarea id="ajustesParticulares1" name="ajustesParticulares1" class="form-control professional-textarea" rows="3" placeholder="Haz clic para definir ajustes específicos y personalizados que faciliten el aprendizaje del estudiante..."></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Evaluación de los ajustes -->
+                                        <div class="form-row">
+                                            <div class="form-group">
+                                                <label for="evaluacionAjustes1">Evaluación de los ajustes:</label>
+                                                <div class="textarea-container">
+                                                    <i class="fas fa-chart-line textarea-icon"></i>
+                                                    <textarea id="evaluacionAjustes1" name="evaluacionAjustes1" class="form-control professional-textarea" rows="3" placeholder="Haz clic para establecer criterios y métodos de evaluación específicos para medir la efectividad de los ajustes implementados..."></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Separador entre materias -->
+                                    <hr class="materia-separator">
+                                </div>
+                            </div>
+
+                            <!-- Botón para agregar más materias -->
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <button type="button" class="btn-add-signature" id="addMateriaBtn">
+                                        <i class="fas fa-plus"></i>
+                                        Agregar otra materia
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

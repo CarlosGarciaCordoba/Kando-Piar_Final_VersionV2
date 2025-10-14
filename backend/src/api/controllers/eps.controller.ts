@@ -11,7 +11,12 @@ export class EpsController {
                 SELECT id_eps, nombre, descripcion
                 FROM eps 
                 WHERE estado = true
-                ORDER BY nombre ASC
+                ORDER BY 
+                    CASE 
+                        WHEN LOWER(nombre) = 'otro' THEN 1 
+                        ELSE 0 
+                    END ASC,
+                    nombre ASC
             `;
             
             const result = await pool.query(query);

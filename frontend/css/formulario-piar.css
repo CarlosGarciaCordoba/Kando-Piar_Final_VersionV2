@@ -1939,3 +1939,399 @@ label[for="observacionesEntornos"] {
         gap: 6px;
     }
 }
+
+/* =============================================
+   ESTILOS PARA SECCIÓN DE FIRMAS
+   ============================================= */
+
+.signatures-section {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 25px;
+    margin-top: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.signature-row,
+.teacher-signature-row {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 15px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.signature-row:hover,
+.teacher-signature-row:hover {
+    background: #f0f0f0;
+    border-color: var(--primary-color);
+}
+
+.signature-row .form-row,
+.teacher-signature-row .form-row {
+    margin-bottom: 0;
+}
+
+.btn-add-signature {
+    background: #f8f9fa;
+    color: #495057;
+    border: 1px solid #dee2e6;
+    padding: 12px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    width: 100%;
+    justify-content: flex-start;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-add-signature:hover {
+    background: #e9ecef;
+    border-color: #adb5bd;
+    color: #495057;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.btn-add-signature i {
+    color: #6c757d;
+    font-size: 12px;
+}
+
+.btn-remove-signature {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-remove-signature:hover {
+    background: linear-gradient(135deg, #c82333, #bd2130);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(220, 53, 69, 0.3);
+}
+
+/* Responsive para sección de firmas */
+@media (max-width: 768px) {
+    .signatures-section {
+        padding: 15px;
+    }
+    
+    .signature-row,
+    .teacher-signature-row {
+        padding: 12px;
+    }
+    
+    .btn-remove-signature {
+        position: static;
+        margin-top: 10px;
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ============================================ */
+/* ANEXO 3 - ESTILOS ESPECÍFICOS */
+/* ============================================ */
+
+/* Título principal del PIAR */
+.main-title-section {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, #4f86f7 0%, #6b73ff 100%);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(79, 134, 247, 0.3);
+}
+
+.main-title-section h1 {
+    color: white;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    letter-spacing: 0.5px;
+}
+
+/* Contenedor de materias */
+.materia-group {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.materia-group:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #4f86f7;
+}
+
+/* Separador entre materias */
+.materia-separator {
+    margin: 0;
+    border: none;
+    border-top: 2px solid #e2e8f0;
+    margin-top: 15px;
+}
+
+/* Campos adicionales */
+.campos-adicionales {
+    background: #f7fafc;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    border-left: 4px solid #4f86f7;
+}
+
+/* Botón para eliminar materia */
+.btn-remove-materia {
+    background: #e53e3e;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.btn-remove-materia:hover {
+    background: #c53030;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+}
+
+.btn-remove-materia:active {
+    transform: translateY(0);
+}
+
+.btn-remove-materia i {
+    font-size: 12px;
+}
+
+/* Estilos para select de nivel educativo y asignatura */
+.nivel-educativo,
+.asignatura-especifica {
+    background: white;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.nivel-educativo:focus,
+.asignatura-especifica:focus {
+    border-color: #4f86f7;
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.1);
+    outline: none;
+}
+
+/* Ajustes para formularios dentro del grupo de materia */
+.materia-group .form-row {
+    margin-bottom: 15px;
+}
+
+.materia-group .form-group:last-child {
+    margin-bottom: 0;
+}
+
+/* Contenedor para textarea profesional */
+.textarea-container {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.textarea-container:hover {
+    border-color: #4f86f7;
+    background: #f0f4ff;
+    box-shadow: 0 4px 12px rgba(79, 134, 247, 0.1);
+}
+
+.textarea-container:focus-within {
+    border-color: #4f86f7;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.1);
+}
+
+/* Icono del textarea */
+.textarea-icon {
+    color: #4f86f7;
+    font-size: 16px;
+    margin-right: 12px;
+    margin-top: 4px;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.textarea-container:hover .textarea-icon {
+    color: #3182ce;
+    transform: scale(1.1);
+}
+
+/* Textarea profesional */
+.professional-textarea {
+    flex: 1;
+    border: none;
+    background: transparent;
+    resize: vertical;
+    min-height: 60px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #2d3748;
+    transition: all 0.3s ease;
+    outline: none;
+    box-shadow: none !important;
+}
+
+.professional-textarea:focus {
+    outline: none;
+    box-shadow: none !important;
+    border: none;
+}
+
+.professional-textarea::placeholder {
+    color: #a0aec0;
+    font-style: italic;
+    font-size: 13px;
+}
+
+/* Mejorar apariencia de textareas normales */
+.campos-adicionales textarea:not(.professional-textarea) {
+    resize: vertical;
+    min-height: 80px;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.campos-adicionales textarea:not(.professional-textarea):focus {
+    border-color: #4f86f7;
+    box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.1);
+    outline: none;
+}
+
+/* Responsive para Anexo 3 */
+@media (max-width: 768px) {
+    .materia-group {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .campos-adicionales {
+        padding: 12px;
+        margin-top: 12px;
+    }
+    
+    .btn-remove-materia {
+        width: 100%;
+        justify-content: center;
+        margin-top: 10px;
+    }
+    
+    .materia-group .form-row {
+        margin-bottom: 12px;
+    }
+    
+    .textarea-container {
+        padding: 10px;
+    }
+    
+    .textarea-icon {
+        font-size: 14px;
+        margin-right: 8px;
+    }
+    
+    .professional-textarea {
+        font-size: 13px;
+    }
+    
+    .professional-textarea::placeholder {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .materia-group {
+        padding: 12px;
+    }
+    
+    .campos-adicionales {
+        padding: 10px;
+    }
+    
+    .btn-remove-materia {
+        font-size: 13px;
+        padding: 6px 12px;
+    }
+    
+    .textarea-container {
+        padding: 8px;
+        flex-direction: column;
+    }
+    
+    .textarea-icon {
+        font-size: 13px;
+        margin-right: 0;
+        margin-bottom: 4px;
+        align-self: flex-start;
+    }
+    
+    .professional-textarea {
+        font-size: 12px;
+        min-height: 50px;
+    }
+    
+    .professional-textarea::placeholder {
+        font-size: 11px;
+    }
+    
+    .main-title-section {
+        margin-bottom: 20px;
+        padding: 15px;
+    }
+    
+    .main-title-section h1 {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-title-section {
+        margin-bottom: 25px;
+        padding: 18px;
+    }
+    
+    .main-title-section h1 {
+        font-size: 24px;
+    }
+}
