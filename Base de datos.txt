@@ -263,3 +263,68 @@ INSERT INTO asignaturas (id_asignatura, nombre, descripcion, estado) VALUES
 
 -- Contar asignaturas activas:
 -- SELECT COUNT(*) FROM asignaturas WHERE estado = true;
+
+-- =============================================
+-- TABLA DE GRADOS PIAR
+-- Fecha de creación: 14 de octubre de 2025
+-- Propósito: Grados académicos para el sistema PIAR
+-- =============================================
+CREATE TABLE IF NOT EXISTS grados_piar (
+    id_grado SERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL UNIQUE,
+    descripcion TEXT,
+    nivel_educativo VARCHAR(20) NOT NULL CHECK (nivel_educativo IN ('preescolar', 'basica', 'media')),
+    orden_grado INTEGER NOT NULL,
+    estado BOOLEAN DEFAULT TRUE,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insertar los grados académicos
+INSERT INTO grados_piar (id_grado, nombre, descripcion, nivel_educativo, orden_grado) VALUES
+-- Preescolar
+(1, 'Pre-Jardín', 'Nivel de educación inicial para niños de 3 años', 'preescolar', 1),
+(2, 'Jardín', 'Nivel de educación inicial para niños de 4 años', 'preescolar', 2),
+(3, 'Transición', 'Nivel de educación inicial para niños de 5 años', 'preescolar', 3),
+-- Básica (Primaria y Secundaria unificadas)
+(4, '1°', 'Primer grado de educación básica', 'basica', 4),
+(5, '2°', 'Segundo grado de educación básica', 'basica', 5),
+(6, '3°', 'Tercer grado de educación básica', 'basica', 6),
+(7, '4°', 'Cuarto grado de educación básica', 'basica', 7),
+(8, '5°', 'Quinto grado de educación básica', 'basica', 8),
+(9, '6°', 'Sexto grado de educación básica', 'basica', 9),
+(10, '7°', 'Séptimo grado de educación básica', 'basica', 10),
+(11, '8°', 'Octavo grado de educación básica', 'basica', 11),
+(12, '9°', 'Noveno grado de educación básica', 'basica', 12),
+-- Media
+(13, '10°', 'Décimo grado de educación media', 'media', 13),
+(14, '11°', 'Undécimo grado de educación media', 'media', 14);
+
+-- Crear índices para optimizar consultas
+CREATE INDEX idx_grados_piar_nivel_educativo ON grados_piar(nivel_educativo);
+CREATE INDEX idx_grados_piar_orden_grado ON grados_piar(orden_grado);
+CREATE INDEX idx_grados_piar_estado ON grados_piar(estado);
+
+-- =============================================
+-- CONSULTAS ÚTILES PARA GRADOS PIAR
+-- =============================================
+-- Obtener todos los grados activos ordenados:
+-- SELECT * FROM grados_piar WHERE estado = true ORDER BY orden_grado;
+
+-- Obtener grados por nivel educativo:
+-- SELECT * FROM grados_piar WHERE nivel_educativo = 'preescolar' AND estado = true ORDER BY orden_grado;
+-- SELECT * FROM grados_piar WHERE nivel_educativo = 'basica' AND estado = true ORDER BY orden_grado;
+-- SELECT * FROM grados_piar WHERE nivel_educativo = 'media' AND estado = true ORDER BY orden_grado;
+
+-- Contar grados por nivel:
+-- SELECT nivel_educativo, COUNT(*) as cantidad FROM grados_piar WHERE estado = true GROUP BY nivel_educativo ORDER BY MIN(orden_grado);
+
+-- Obtener resumen de grados por nivel:
+-- SELECT 
+--     nivel_educativo,
+--     COUNT(*) as cantidad_grados,
+--     STRING_AGG(nombre, ', ' ORDER BY orden_grado) as grados
+-- FROM grados_piar 
+-- WHERE estado = true
+-- GROUP BY nivel_educativo
+-- ORDER BY MIN(orden_grado);

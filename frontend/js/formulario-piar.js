@@ -2458,49 +2458,10 @@ const FormularioPIAR = (function() {
     let materiaCounter = 1;
     const maxMaterias = 10; // Límite de materias que se pueden agregar
 
-    // Opciones de asignaturas por nivel educativo
-    const asignaturasOptions = {
-        preescolar: [
-            'Dimensión comunicativa',
-            'Dimensión cognitiva', 
-            'Dimensión corporal',
-            'Dimensión socioafectiva',
-            'Dimensión espiritual',
-            'Dimensión ética',
-            'Dimensión estética'
-        ],
-        basica: [
-            'Lengua Castellana',
-            'Inglés',
-            'Matemáticas',
-            'Biología',
-            'Física',
-            'Química',
-            'Ciencias Sociales',
-            'Ética',
-            'Artística',
-            'Educación Física',
-            'Religión',
-            'Tecnología e Informática'
-        ],
-        media: [
-            'Lengua Castellana',
-            'Inglés',
-            'Matemáticas',
-            'Biología',
-            'Física',
-            'Química',
-            'Ciencias Sociales',
-            'Ética',
-            'Artística',
-            'Educación Física',
-            'Religión',
-            'Tecnología e Informática'
-        ]
-    };
-
+    // Datos de fallback solo para emergencias (cuando la API no responde)
+    
     // Función para manejar el cambio de nivel educativo
-    function _handleNivelEducativoChange(event) {
+    async function _handleNivelEducativoChange(event) {
         const selectElement = event.target;
         const groupId = selectElement.dataset.group;
         const selectedValue = selectElement.value;
@@ -2509,19 +2470,69 @@ const FormularioPIAR = (function() {
         const asignaturaSelect = document.getElementById(`asignatura${groupId}`);
         const camposAdicionales = document.getElementById(`camposAdicionales${groupId}`);
         
-        if (selectedValue && asignaturasOptions[selectedValue]) {
+        if (selectedValue) {
             // Mostrar el select de asignaturas
             asignaturaRow.style.display = 'block';
             
-            // Limpiar y llenar opciones de asignatura
-            asignaturaSelect.innerHTML = '<option value="">Seleccione una asignatura</option>';
+            // Limpiar opciones
+            asignaturaSelect.innerHTML = '<option value="">Cargando asignaturas...</option>';
             
-            asignaturasOptions[selectedValue].forEach(asignatura => {
-                const option = document.createElement('option');
-                option.value = asignatura.toLowerCase().replace(/\s+/g, '_');
-                option.textContent = asignatura;
-                asignaturaSelect.appendChild(option);
-            });
+            if (selectedValue === 'preescolar') {
+                // Cargar dimensiones de educación inicial desde la API
+                try {
+                    const asignaturas = await cargarAsignaturasEducacionInicial();
+                    
+                    // Limpiar y llenar opciones
+                    asignaturaSelect.innerHTML = '<option value="">Seleccione una dimensión</option>';
+                    
+                    asignaturas.forEach(asignatura => {
+                        const option = document.createElement('option');
+                        option.value = asignatura.id_asignatura_inicial;
+                        option.textContent = asignatura.nombre;
+                        asignaturaSelect.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error('Error al cargar dimensiones de educación inicial:', error);
+                    // Fallback de emergencia solo si la API falla
+                    asignaturaSelect.innerHTML = '<option value="">Seleccione una dimensión</option>';
+                    fallbackData.preescolar.forEach(asignatura => {
+                        const option = document.createElement('option');
+                        option.value = asignatura.toLowerCase().replace(/\s+/g, '_');
+                        option.textContent = asignatura;
+                        asignaturaSelect.appendChild(option);
+                    });
+                }
+            } else if (selectedValue === 'basica' || selectedValue === 'media') {
+                // Cargar asignaturas desde la API para educación básica y media
+                try {
+                    const asignaturas = await cargarAsignaturas();
+                    
+                    // Limpiar y llenar opciones
+                    asignaturaSelect.innerHTML = '<option value="">Seleccione una asignatura</option>';
+                    
+                    asignaturas.forEach(asignatura => {
+                        const option = document.createElement('option');
+                        option.value = asignatura.id_asignatura;
+                        option.textContent = asignatura.nombre;
+                        asignaturaSelect.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error('Error al cargar asignaturas:', error);
+                    // Fallback de emergencia solo si la API falla
+                    asignaturaSelect.innerHTML = '<option value="">Seleccione una asignatura</option>';
+                    if (fallbackData[selectedValue]) {
+                        fallbackData[selectedValue].forEach(asignatura => {
+                            const option = document.createElement('option');
+                            option.value = asignatura.toLowerCase().replace(/\s+/g, '_');
+                            option.textContent = asignatura;
+                            asignaturaSelect.appendChild(option);
+                        });
+                    }
+                }
+            } else {
+                // Si no es un nivel reconocido, mostrar mensaje
+                asignaturaSelect.innerHTML = '<option value="">Nivel educativo no reconocido</option>';
+            }
             
             // Ocultar campos adicionales hasta que se seleccione una asignatura
             camposAdicionales.style.display = 'none';
@@ -3952,6 +3963,7 @@ function validarAreas() {
 
 // Variables para cache de asignaturas
 let asignaturasCache = null;
+let asignaturasEducacionInicialCache = null;
 
 // Función para cargar asignaturas desde la API
 async function cargarAsignaturas() {
@@ -3961,7 +3973,7 @@ async function cargarAsignaturas() {
             return asignaturasCache;
         }
         
-        const response = await fetch('/api/asignaturas');
+        const response = await fetch('http://localhost:3000/api/asignaturas');
         const data = await response.json();
         
         if (data.success) {
@@ -3985,6 +3997,39 @@ async function cargarAsignaturas() {
             { id_asignatura: 8, nombre: 'Filosofía' },
             { id_asignatura: 9, nombre: 'Química' },
             { id_asignatura: 10, nombre: 'Física' }
+        ];
+    }
+}
+
+// Función para cargar asignaturas de educación inicial desde la API
+async function cargarAsignaturasEducacionInicial() {
+    try {
+        // Si ya tenemos las dimensiones en cache, las retornamos
+        if (asignaturasEducacionInicialCache) {
+            return asignaturasEducacionInicialCache;
+        }
+        
+        const response = await fetch('http://localhost:3000/api/asignaturas-educacion-inicial');
+        const data = await response.json();
+        
+        if (data.success) {
+            asignaturasEducacionInicialCache = data.data;
+            return asignaturasEducacionInicialCache;
+        } else {
+            console.error('Error al cargar dimensiones de educación inicial:', data.message);
+            return [];
+        }
+    } catch (error) {
+        console.error('Error al conectar con la API de educación inicial:', error);
+        // Devolver dimensiones por defecto en caso de error
+        return [
+            { id_asignatura_inicial: 1, nombre: 'Dimensión comunicativa' },
+            { id_asignatura_inicial: 2, nombre: 'Dimensión cognitiva' },
+            { id_asignatura_inicial: 3, nombre: 'Dimensión corporal' },
+            { id_asignatura_inicial: 4, nombre: 'Dimensión socioafectiva' },
+            { id_asignatura_inicial: 5, nombre: 'Dimensión espiritual' },
+            { id_asignatura_inicial: 6, nombre: 'Dimensión ética' },
+            { id_asignatura_inicial: 7, nombre: 'Dimensión estética' }
         ];
     }
 }

@@ -3085,6 +3085,174 @@ COMMENT ON COLUMN formularios_piar_anexo1.firma_ruta IS 'Ruta del archivo de fir
 COMMENT ON COLUMN formularios_piar_anexo1.firma_hash IS 'Hash SHA-256 del archivo de firma para verificar integridad';
 COMMENT ON COLUMN formularios_piar_anexo1.codigo_institucion IS 'Código de la sede educativa donde se registra el PIAR';
 
+-- =============================================
+-- TABLA DE GRADOS PIAR
+-- Fecha de creación: 14 de octubre de 2025
+-- Propósito: Grados académicos para el sistema PIAR
+-- =============================================
+
+-- Crear la tabla grados_piar
+CREATE TABLE IF NOT EXISTS grados_piar (
+    id_grado SERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL UNIQUE,
+    descripcion TEXT,
+    nivel_educativo VARCHAR(20) NOT NULL CHECK (nivel_educativo IN ('preescolar', 'basica', 'media')),
+    orden_grado INTEGER NOT NULL,
+    estado BOOLEAN DEFAULT TRUE,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insertar los grados académicos
+-- Preescolar
+INSERT INTO grados_piar (id_grado, nombre, descripcion, nivel_educativo, orden_grado) VALUES
+(1, 'Pre-Jardín', 'Nivel de educación inicial para niños de 3 años', 'preescolar', 1);
+
+INSERT INTO grados_piar (id_grado, nombre, descripcion, nivel_educativo, orden_grado) VALUES
+(2, 'Jardín', 'Nivel de educación inicial para niños de 4 años', 'preescolar', 2);
+
+INSERT INTO grados_piar (id_grado, nombre, descripcion, nivel_educativo, orden_grado) VALUES
+(3, 'Transición', 'Nivel de educación inicial para niños de 5 años', 'preescolar', 3);
+
+-- Básica
+INSERT INTO grados_piar (id_grado, nombre, descripcion, nivel_educativo, orden_grado) VALUES
+(4, '1°', 'Primer grado de educación básica', 'basica', 4);
+
+INSERT INTO grados_piar (id_grado, nombre, descripcion, nivel_educativo, orden_grado) VALUES
+(5, '2°', 'Segundo grado de educación básica', 'basica', 5);
+
+INSERT INTO grados_piar (id_grado, nombre, descripcion, nivel_educativo, orden_grado) VALUES
+(6, '3°', 'Tercer grado de educación básica', 'basica', 6);
+
+INSERT INTO grados_piar (id_grado, nombre, descripcion, nivel_educativo, orden_grado) VALUES
+(7, '4°', 'Cuarto grado de educación básica', 'basica', 7);
+
+INSERT INTO grados_piar (id_grado, nombre, descripcion, nivel_educativo, orden_grado) VALUES
+(8, '5°', 'Quinto grado de educación básica', 'basica', 8);
+
+INSERT INTO grados_piar (id_grado, nombre, descripcion, nivel_educativo, orden_grado) VALUES
+(9, '6°', 'Sexto grado de educación básica', 'basica', 9);
+
+INSERT INTO grados_piar (id_grado, nombre, descripcion, nivel_educativo, orden_grado) VALUES
+(10, '7°', 'Séptimo grado de educación básica', 'basica', 10);
+
+INSERT INTO grados_piar (id_grado, nombre, descripcion, nivel_educativo, orden_grado) VALUES
+(11, '8°', 'Octavo grado de educación básica', 'basica', 11);
+
+INSERT INTO grados_piar (id_grado, nombre, descripcion, nivel_educativo, orden_grado) VALUES
+(12, '9°', 'Noveno grado de educación básica', 'basica', 12);
+
+-- Media
+INSERT INTO grados_piar (id_grado, nombre, descripcion, nivel_educativo, orden_grado) VALUES
+(13, '10°', 'Décimo grado de educación media', 'media', 13);
+
+INSERT INTO grados_piar (id_grado, nombre, descripcion, nivel_educativo, orden_grado) VALUES
+(14, '11°', 'Undécimo grado de educación media', 'media', 14);
+
+-- Crear índices para optimizar consultas
+CREATE INDEX idx_grados_piar_nivel_educativo ON grados_piar(nivel_educativo);
+CREATE INDEX idx_grados_piar_orden_grado ON grados_piar(orden_grado);
+CREATE INDEX idx_grados_piar_estado ON grados_piar(estado);
+
+-- Comentarios sobre la tabla grados_piar
+COMMENT ON TABLE grados_piar IS 'Tabla que almacena los grados académicos del sistema educativo colombiano para el sistema PIAR';
+COMMENT ON COLUMN grados_piar.id_grado IS 'Identificador único del grado académico';
+COMMENT ON COLUMN grados_piar.nombre IS 'Nombre del grado (Pre-Jardín, Jardín, etc.)';
+COMMENT ON COLUMN grados_piar.descripcion IS 'Descripción detallada del grado académico';
+COMMENT ON COLUMN grados_piar.nivel_educativo IS 'Nivel educativo: preescolar, basica, media';
+COMMENT ON COLUMN grados_piar.orden_grado IS 'Orden secuencial del grado en el sistema educativo';
+COMMENT ON COLUMN grados_piar.estado IS 'Estado activo/inactivo del grado';
+
+-- =============================================
+-- CONSULTAS ÚTILES PARA GRADOS PIAR
+-- =============================================
+
+-- Verificar que los datos se insertaron correctamente
+-- SELECT id_grado, nombre, nivel_educativo, orden_grado, estado FROM grados_piar ORDER BY orden_grado;
+
+-- Consulta para verificar por nivel educativo
+-- SELECT nivel_educativo, COUNT(*) as cantidad_grados, STRING_AGG(nombre, ', ' ORDER BY orden_grado) as grados FROM grados_piar WHERE estado = true GROUP BY nivel_educativo ORDER BY MIN(orden_grado);
+
+-- Obtener grados por nivel educativo específico
+-- SELECT * FROM grados_piar WHERE nivel_educativo = 'preescolar' AND estado = true ORDER BY orden_grado;
+-- SELECT * FROM grados_piar WHERE nivel_educativo = 'basica' AND estado = true ORDER BY orden_grado;
+-- SELECT * FROM grados_piar WHERE nivel_educativo = 'media' AND estado = true ORDER BY orden_grado;
+
+-- =============================================
+-- TABLA DE ASIGNATURAS EDUCACIÓN INICIAL
+-- Fecha de creación: 14 de octubre de 2025
+-- Propósito: Dimensiones del desarrollo integral para educación inicial (preescolar)
+-- =============================================
+
+-- Crear la tabla asignaturas_educacion_inicial
+CREATE TABLE IF NOT EXISTS asignaturas_educacion_inicial (
+    id_asignatura_inicial SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    descripcion TEXT,
+    dimension_tipo VARCHAR(50) NOT NULL,
+    orden_dimension INTEGER NOT NULL,
+    estado BOOLEAN DEFAULT TRUE,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insertar las dimensiones de educación inicial
+
+-- Dimensión Comunicativa
+INSERT INTO asignaturas_educacion_inicial (id_asignatura_inicial, nombre, descripcion, dimension_tipo, orden_dimension) VALUES
+(1, 'Dimensión comunicativa', 'Desarrollo de habilidades comunicativas, lenguaje oral y escrito, expresión y comprensión', 'dimension_desarrollo', 1);
+
+-- Dimensión Cognitiva  
+INSERT INTO asignaturas_educacion_inicial (id_asignatura_inicial, nombre, descripcion, dimension_tipo, orden_dimension) VALUES
+(2, 'Dimensión cognitiva', 'Desarrollo del pensamiento, procesos mentales, resolución de problemas y construcción del conocimiento', 'dimension_desarrollo', 2);
+
+-- Dimensión Corporal
+INSERT INTO asignaturas_educacion_inicial (id_asignatura_inicial, nombre, descripcion, dimension_tipo, orden_dimension) VALUES
+(3, 'Dimensión corporal', 'Desarrollo motriz, esquema corporal, coordinación y expresión corporal', 'dimension_desarrollo', 3);
+
+-- Dimensión Socioafectiva
+INSERT INTO asignaturas_educacion_inicial (id_asignatura_inicial, nombre, descripcion, dimension_tipo, orden_dimension) VALUES
+(4, 'Dimensión socioafectiva', 'Desarrollo emocional, relaciones interpersonales, autoestima y habilidades sociales', 'dimension_desarrollo', 4);
+
+-- Dimensión Espiritual
+INSERT INTO asignaturas_educacion_inicial (id_asignatura_inicial, nombre, descripcion, dimension_tipo, orden_dimension) VALUES
+(5, 'Dimensión espiritual', 'Desarrollo de valores, trascendencia, sentido de vida y conexión con lo sagrado', 'dimension_desarrollo', 5);
+
+-- Dimensión Ética
+INSERT INTO asignaturas_educacion_inicial (id_asignatura_inicial, nombre, descripcion, dimension_tipo, orden_dimension) VALUES
+(6, 'Dimensión ética', 'Desarrollo moral, valores, normas de convivencia y formación ciudadana', 'dimension_desarrollo', 6);
+
+-- Dimensión Estética
+INSERT INTO asignaturas_educacion_inicial (id_asignatura_inicial, nombre, descripcion, dimension_tipo, orden_dimension) VALUES
+(7, 'Dimensión estética', 'Desarrollo artístico, apreciación de la belleza, creatividad y expresión artística', 'dimension_desarrollo', 7);
+
+-- Crear índices para optimizar consultas
+CREATE INDEX idx_asignaturas_inicial_dimension_tipo ON asignaturas_educacion_inicial(dimension_tipo);
+CREATE INDEX idx_asignaturas_inicial_orden ON asignaturas_educacion_inicial(orden_dimension);
+CREATE INDEX idx_asignaturas_inicial_estado ON asignaturas_educacion_inicial(estado);
+
+-- Comentarios sobre la tabla asignaturas_educacion_inicial
+COMMENT ON TABLE asignaturas_educacion_inicial IS 'Tabla que almacena las dimensiones del desarrollo integral para educación inicial (preescolar) según lineamientos del MEN';
+COMMENT ON COLUMN asignaturas_educacion_inicial.id_asignatura_inicial IS 'Identificador único de la dimensión de educación inicial';
+COMMENT ON COLUMN asignaturas_educacion_inicial.nombre IS 'Nombre de la dimensión (Comunicativa, Cognitiva, etc.)';
+COMMENT ON COLUMN asignaturas_educacion_inicial.descripcion IS 'Descripción detallada de la dimensión y sus objetivos';
+COMMENT ON COLUMN asignaturas_educacion_inicial.dimension_tipo IS 'Tipo de dimensión (dimension_desarrollo)';
+COMMENT ON COLUMN asignaturas_educacion_inicial.orden_dimension IS 'Orden secuencial de la dimensión';
+COMMENT ON COLUMN asignaturas_educacion_inicial.estado IS 'Estado activo/inactivo de la dimensión';
+
+-- =============================================
+-- CONSULTAS ÚTILES PARA ASIGNATURAS EDUCACIÓN INICIAL
+-- =============================================
+
+-- Verificar todas las dimensiones activas
+-- SELECT id_asignatura_inicial, nombre, dimension_tipo, orden_dimension, estado FROM asignaturas_educacion_inicial ORDER BY orden_dimension;
+
+-- Obtener resumen de dimensiones
+-- SELECT COUNT(*) as total_dimensiones, STRING_AGG(nombre, ', ' ORDER BY orden_dimension) as dimensiones FROM asignaturas_educacion_inicial WHERE estado = true;
+
+-- Buscar dimensión específica
+-- SELECT * FROM asignaturas_educacion_inicial WHERE nombre ILIKE '%comunicativa%';
+
 -- Para ejecutar:
 -- 1. Crear base de datos: CREATE DATABASE kando_piar;
 -- 2. Ejecutar este script completo
