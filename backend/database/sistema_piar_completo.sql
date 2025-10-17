@@ -3253,9 +3253,127 @@ COMMENT ON COLUMN asignaturas_educacion_inicial.estado IS 'Estado activo/inactiv
 -- Buscar dimensión específica
 -- SELECT * FROM asignaturas_educacion_inicial WHERE nombre ILIKE '%comunicativa%';
 
+-- =============================================
+-- TABLA DE DERECHOS BÁSICOS DE APRENDIZAJE (DBA)
+-- Fecha de creación: 14 de octubre de 2025
+-- Propósito: Almacenar los derechos básicos de aprendizaje por área y grado
+-- =============================================
+
+-- Crear la tabla principal de derechos básicos de aprendizaje
+CREATE TABLE IF NOT EXISTS derechos_basicos_aprendizaje (
+    id_dba SERIAL PRIMARY KEY,
+    id_asignatura INTEGER NOT NULL REFERENCES asignaturas(id_asignatura) ON DELETE CASCADE,
+    id_grado INTEGER NOT NULL REFERENCES grados_piar(id_grado) ON DELETE CASCADE,
+    numero_dba INTEGER NOT NULL, -- Número del DBA (1, 2, 3, etc.)
+    titulo TEXT NOT NULL, -- Título descriptivo del DBA
+    descripcion TEXT NOT NULL, -- Descripción completa del DBA
+    estado BOOLEAN DEFAULT TRUE,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Restricciones
+    CONSTRAINT unique_dba_asignatura_grado_numero UNIQUE (id_asignatura, id_grado, numero_dba),
+    CONSTRAINT check_numero_dba_positivo CHECK (numero_dba > 0)
+);
+
+-- Crear la tabla de evidencias de aprendizaje (relacionada con cada DBA)
+CREATE TABLE IF NOT EXISTS evidencias_aprendizaje (
+    id_evidencia SERIAL PRIMARY KEY,
+    id_dba INTEGER NOT NULL REFERENCES derechos_basicos_aprendizaje(id_dba) ON DELETE CASCADE,
+    numero_evidencia INTEGER NOT NULL, -- Orden de la evidencia dentro del DBA
+    descripcion TEXT NOT NULL, -- Descripción de la evidencia
+    estado BOOLEAN DEFAULT TRUE,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Restricciones
+    CONSTRAINT unique_evidencia_dba_numero UNIQUE (id_dba, numero_evidencia),
+    CONSTRAINT check_numero_evidencia_positivo CHECK (numero_evidencia > 0)
+);
+
+-- Crear índices para optimizar consultas de DBA
+CREATE INDEX idx_dba_asignatura ON derechos_basicos_aprendizaje(id_asignatura);
+CREATE INDEX idx_dba_grado ON derechos_basicos_aprendizaje(id_grado);
+CREATE INDEX idx_dba_asignatura_grado ON derechos_basicos_aprendizaje(id_asignatura, id_grado);
+CREATE INDEX idx_dba_estado ON derechos_basicos_aprendizaje(estado);
+CREATE INDEX idx_evidencias_dba ON evidencias_aprendizaje(id_dba);
+CREATE INDEX idx_evidencias_estado ON evidencias_aprendizaje(estado);
+
+-- Crear triggers para actualizar fecha de modificación en DBA
+CREATE TRIGGER update_dba_updated_at
+    BEFORE UPDATE ON derechos_basicos_aprendizaje
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_evidencias_updated_at
+    BEFORE UPDATE ON evidencias_aprendizaje
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+-- Comentarios sobre las tablas de DBA
+COMMENT ON TABLE derechos_basicos_aprendizaje IS 'Tabla que almacena los Derechos Básicos de Aprendizaje (DBA) por asignatura y grado según el MEN';
+COMMENT ON COLUMN derechos_basicos_aprendizaje.id_dba IS 'Identificador único del derecho básico de aprendizaje';
+COMMENT ON COLUMN derechos_basicos_aprendizaje.id_asignatura IS 'Referencia a la asignatura (tabla asignaturas)';
+COMMENT ON COLUMN derechos_basicos_aprendizaje.id_grado IS 'Referencia al grado académico (tabla grados_piar)';
+COMMENT ON COLUMN derechos_basicos_aprendizaje.numero_dba IS 'Número secuencial del DBA dentro de la asignatura y grado';
+COMMENT ON COLUMN derechos_basicos_aprendizaje.titulo IS 'Título descriptivo del derecho básico de aprendizaje';
+COMMENT ON COLUMN derechos_basicos_aprendizaje.descripcion IS 'Descripción completa del DBA';
+
+COMMENT ON TABLE evidencias_aprendizaje IS 'Tabla que almacena las evidencias de aprendizaje asociadas a cada DBA';
+COMMENT ON COLUMN evidencias_aprendizaje.id_evidencia IS 'Identificador único de la evidencia de aprendizaje';
+COMMENT ON COLUMN evidencias_aprendizaje.id_dba IS 'Referencia al DBA al que pertenece la evidencia';
+COMMENT ON COLUMN evidencias_aprendizaje.numero_evidencia IS 'Número secuencial de la evidencia dentro del DBA';
+COMMENT ON COLUMN evidencias_aprendizaje.descripcion IS 'Descripción de la evidencia de aprendizaje';
+
+-- =============================================
+-- CONSULTAS ÚTILES PARA LOS DBA
+-- =============================================
+
+-- Obtener todos los DBA de una asignatura y grado específico:
+-- SELECT 
+--     dba.numero_dba,
+--     dba.titulo,
+--     dba.descripcion,
+--     COUNT(ev.id_evidencia) as total_evidencias
+-- FROM derechos_basicos_aprendizaje dba
+-- LEFT JOIN evidencias_aprendizaje ev ON dba.id_dba = ev.id_dba
+-- WHERE dba.id_asignatura = 2 AND dba.id_grado = 4 AND dba.estado = true
+-- GROUP BY dba.id_dba, dba.numero_dba, dba.titulo, dba.descripcion
+-- ORDER BY dba.numero_dba;
+
+-- Obtener un DBA específico con todas sus evidencias:
+-- SELECT 
+--     dba.numero_dba,
+--     dba.titulo,
+--     dba.descripcion as descripcion_dba,
+--     ev.numero_evidencia,
+--     ev.descripcion as descripcion_evidencia
+-- FROM derechos_basicos_aprendizaje dba
+-- LEFT JOIN evidencias_aprendizaje ev ON dba.id_dba = ev.id_dba
+-- WHERE dba.id_asignatura = 2 AND dba.id_grado = 4 AND dba.numero_dba = 1
+-- AND dba.estado = true AND (ev.estado = true OR ev.estado IS NULL)
+-- ORDER BY ev.numero_evidencia;
+
+-- Vista completa con nombres de asignatura y grado:
+-- SELECT 
+--     a.nombre as asignatura,
+--     g.nombre as grado,
+--     dba.numero_dba,
+--     dba.titulo,
+--     dba.descripcion,
+--     COUNT(ev.id_evidencia) as total_evidencias
+-- FROM derechos_basicos_aprendizaje dba
+-- INNER JOIN asignaturas a ON dba.id_asignatura = a.id_asignatura
+-- INNER JOIN grados_piar g ON dba.id_grado = g.id_grado
+-- LEFT JOIN evidencias_aprendizaje ev ON dba.id_dba = ev.id_dba AND ev.estado = true
+-- WHERE dba.estado = true
+-- GROUP BY a.nombre, g.nombre, dba.id_dba, dba.numero_dba, dba.titulo, dba.descripcion
+-- ORDER BY a.nombre, g.orden_grado, dba.numero_dba;
+
 -- Para ejecutar:
 -- 1. Crear base de datos: CREATE DATABASE kando_piar;
 -- 2. Ejecutar este script completo
 -- 3. Verificar que todas las extensiones estén habilitadas
 -- 4. Configurar usuarios y permisos según necesidades
--- 5. Ejecutar script de Aulas Hospitalarias si se requiere: insert_aulas_hospitalarias.sql
+-- 5. Ejecutar script de Derechos Básicos de Aprendizaje: create_derechos_basicos_aprendizaje.sql
+-- 6. Ejecutar script de Aulas Hospitalarias si se requiere: insert_aulas_hospitalarias.sql

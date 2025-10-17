@@ -2459,6 +2459,37 @@ const FormularioPIAR = (function() {
     const maxMaterias = 10; // Límite de materias que se pueden agregar
 
     // Datos de fallback solo para emergencias (cuando la API no responde)
+    const fallbackData = {
+        preescolar: [
+            'Dimensión comunicativa',
+            'Dimensión cognitiva', 
+            'Dimensión corporal',
+            'Dimensión socioafectiva',
+            'Dimensión espiritual',
+            'Dimensión ética',
+            'Dimensión estética'
+        ],
+        basica: [
+            'Lengua Castellana',
+            'Inglés',
+            'Matemáticas',
+            'Ciencias Naturales',
+            'Ciencias Sociales',
+            'Educación Artística',
+            'Educación Física',
+            'Ética y Valores'
+        ],
+        media: [
+            'Lengua Castellana',
+            'Inglés',
+            'Matemáticas',
+            'Biología',
+            'Física',
+            'Química',
+            'Ciencias Sociales',
+            'Filosofía'
+        ]
+    };
     
     // Función para manejar el cambio de nivel educativo
     async function _handleNivelEducativoChange(event) {
@@ -3961,9 +3992,10 @@ function validarAreas() {
     };
 }
 
-// Variables para cache de asignaturas
+// Variables para cache de asignaturas y DBA
 let asignaturasCache = null;
 let asignaturasEducacionInicialCache = null;
+let dbaCache = {}; // Cache para DBA por asignatura-grado
 
 // Función para cargar asignaturas desde la API
 async function cargarAsignaturas() {
@@ -4031,6 +4063,94 @@ async function cargarAsignaturasEducacionInicial() {
             { id_asignatura_inicial: 6, nombre: 'Dimensión ética' },
             { id_asignatura_inicial: 7, nombre: 'Dimensión estética' }
         ];
+    }
+}
+
+// =============================================
+// FUNCIONES PARA DERECHOS BÁSICOS DE APRENDIZAJE (DBA)
+// =============================================
+
+// Función para cargar DBA por asignatura y grado
+async function cargarDba(idAsignatura, idGrado) {
+    try {
+        const cacheKey = `${idAsignatura}-${idGrado}`;
+        
+        // Si ya tenemos los DBA en cache, los retornamos
+        if (dbaCache[cacheKey]) {
+            return dbaCache[cacheKey];
+        }
+        
+        const response = await fetch(`http://localhost:3000/api/dba/asignatura/${idAsignatura}/grado/${idGrado}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            dbaCache[cacheKey] = data.data;
+            return data.data;
+        } else {
+            console.error('Error al cargar DBA:', data.message);
+            return null;
+        }
+    } catch (error) {
+        console.error('Error al conectar con la API de DBA:', error);
+        return null;
+    }
+}
+
+// Función para obtener DBA con evidencias completas
+async function cargarDbaConEvidencias(idDba) {
+    try {
+        const response = await fetch(`http://localhost:3000/api/dba/${idDba}/evidencias`);
+        const data = await response.json();
+        
+        if (data.success) {
+            return data.data;
+        } else {
+            console.error('Error al cargar DBA con evidencias:', data.message);
+            return null;
+        }
+    } catch (error) {
+        console.error('Error al conectar con la API de DBA:', error);
+        return null;
+    }
+}
+
+// Función para buscar DBA por término
+async function buscarDba(termino) {
+    try {
+        if (!termino || termino.trim().length < 3) {
+            return [];
+        }
+        
+        const response = await fetch(`http://localhost:3000/api/dba/buscar?q=${encodeURIComponent(termino.trim())}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            return data.data;
+        } else {
+            console.error('Error al buscar DBA:', data.message);
+            return [];
+        }
+    } catch (error) {
+        console.error('Error al conectar con la API de búsqueda de DBA:', error);
+        return [];
+    }
+}
+
+// Función para obtener asignaturas y grados que tienen DBA disponibles
+async function cargarAsignaturasGradosConDba() {
+    try {
+        const response = await fetch('http://localhost:3000/api/dba/asignaturas-grados');
+        const data = await response.json();
+        
+        if (data.success) {
+            return data.data;
+        } else {
+            console.error('Error al cargar asignaturas y grados con DBA:', data.message);
+            return [];
+        }
+    } catch (error) {
+        console.error('Error al conectar con la API de asignaturas-grados DBA:', error);
+        return [];
     }
 }
 
